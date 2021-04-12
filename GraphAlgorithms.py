@@ -10,22 +10,20 @@ class GraphAlgorithms:
         self.img = img
 
         laplacian = cv.Laplacian(img,cv.CV_64F)
-        lapl_padded = np.pad(laplacian,1,mode='edge')
 
         self.B = dict()
 
-        for x in range(laplacian.shape[0]):
-            for y in range(laplacian.shape[1]):
-                neighbors = [(x-1,y),(x+1,y),(x,y-1),(x,y+1)]
-                for n in neighbors:
-                    pair = frozenset({(x,y),n})
-                    if pair not in self.B:
-                        diff = abs(lapl_padded[x+1,y+1] - lapl_padded[n[0]+1,n[1]+1])
+        for x in range(laplacian.shape[1]):
+            for y in range(laplacian.shape[0]):
+                edges = []
+                if y+1 < laplacian.shape[0]:
+                    edges.append([(x, y), (x, y+1)])
+                if x+1 < laplacian.shape[1]:
+                    edges.append([(x, y), (x+1, y)])
+                for edge in edges:
+                    diff = abs(laplacian[edge[0][1], edge[0][0]] - laplacian[edge[1][1], edge[0][1]])
+                    self.B[frozenset(edge)] = -1 if diff==0 else diff
 
-                        if diff==0:
-                            self.B[pair] = -1;
-                        else:
-                            self.B[pair] = 1/diff
 
         max_B = max(self.B.values())+1
         for i in self.B:
@@ -38,8 +36,8 @@ class GraphAlgorithms:
         self.tSeeds = set(tSeeds) #background
         self.sSeeds = set(sSeeds) #object
 
-        tVals = [img[i] for i in self.tSeeds]
-        sVals = [img[i] for i in self.sSeeds]
+        tVals = [img[i[1], i[0]] for i in self.tSeeds]
+        sVals = [img[i[1], i[0]] for i in self.sSeeds]
 
         self.tHist, self.bin_edges = np.histogram(tVals,bins=R_bins,range=(0,255))
         self.tHist = self.tHist / sum(self.tHist)
@@ -48,7 +46,7 @@ class GraphAlgorithms:
         self.sHist = self.sHist / sum(self.sHist)
 
         print("Creating graph")
-        self.G = self.create_graph(img.shape[0], img.shape[1])
+        self.G = self.create_graph(img.shape[1], img.shape[0])
 
 
     def tLinkWeight(self, pixel, intensity, terminal):
@@ -88,8 +86,8 @@ class GraphAlgorithms:
         labels = list([(i%imgw, i//imgw) for i in range(imgw * imgh)]) + ['S', 'T']
         labels_dict = dict(zip(vertices, labels))
 
-        positions = [((i//imgw), -(i%imgw+2)) for i in range(imgw * imgh)] + \
-                    [((imgh-1)/2, 0), ((imgh-1)/2, -(imgw+3))]
+        positions = [((i%imgw), -(i//imgw+2)) for i in range(imgw * imgh)] + \
+                    [((imgw-1)/2, 0), ((imgw-1)/2, -(imgh+3))]
 
         edges = []
         weights = []
@@ -99,7 +97,7 @@ class GraphAlgorithms:
                 edge = (i, terminal_vertex)
                 edges.append(edge)
                 pixel = labels_dict[edge[0]]
-                weights.append(self.tLinkWeight(pixel, self.img[pixel], labels_dict[edge[1]]))
+                weights.append(self.tLinkWeight(pixel, self.img[pixel[1],pixel[0]], labels_dict[edge[1]]))
 
             # n-links horizontally
             if (i+1) < imgw * imgh and (i+1) % imgw != 0:

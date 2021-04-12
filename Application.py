@@ -57,8 +57,8 @@ def main():
     background_regions = select_regions(img,"background")
     plt.close()
 
-    obj_seeds = set([(x,y) for reg in obj_regions for x in range(reg[0],reg[1]+1) for y in range(reg[2],reg[3]+1)])
-    back_seeds = set([(x,y) for reg in background_regions for x in range(reg[0],reg[1]+1) for y in range(reg[2],reg[3]+1)])
+    obj_seeds = set([(x,y) for reg in obj_regions for y in range(reg[0],reg[1]+1) for x in range(reg[2],reg[3]+1)])
+    back_seeds = set([(x,y) for reg in background_regions for y in range(reg[0],reg[1]+1) for x in range(reg[2],reg[3]+1)])
     print("Seeds created")
 
     lm_list = np.array([i for i in range(0,20,5)])/10
