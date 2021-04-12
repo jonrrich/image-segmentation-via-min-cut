@@ -45,7 +45,7 @@ class GraphAlgorithms:
         self.sHist, bin_edges = np.histogram(sVals,bins=self.bin_edges)
         self.sHist = self.sHist / sum(self.sHist)
 
-
+        print("Creating graph")
         self.G = self.create_graph(img.shape[0], img.shape[1])
 
 

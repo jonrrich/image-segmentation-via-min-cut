@@ -55,18 +55,22 @@ def main():
 
     obj_regions = select_regions(img,"object")
     background_regions = select_regions(img,"background")
+    plt.close('all')
 
     obj_seeds = set([(x,y) for reg in obj_regions for x in range(reg[0],reg[1]+1) for y in range(reg[2],reg[3]+1)])
     back_seeds = set([(x,y) for reg in background_regions for x in range(reg[0],reg[1]+1) for y in range(reg[2],reg[3]+1)])
+    print("Seeds created")
 
     GraphAlgos = GraphAlgorithms(Img.gray_img, back_seeds, obj_seeds)
     G = GraphAlgos.G
+    print("Graph made")
 
-    G.show()
+    #G.show()
     G.min_cut()
-    G.show()
+    print("Min cut found")
+    #G.show()
 
-    segmented = Img.segmentation(G.self.partition_S_labels)
+    segmented = Img.segmentation(G.partition_S_labels)
     plt.imshow(segmented)
 
 
