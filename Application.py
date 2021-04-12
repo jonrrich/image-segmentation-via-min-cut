@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
+from Image import *
+from GraphAlgorithms import *
 
 
 # Some code from tutorial: https://matplotlib.org/stable/gallery/event_handling/ginput_manual_clabel_sgskip.html#sphx-glr-gallery-event-handling-ginput-manual-clabel-sgskip-py
@@ -58,10 +60,13 @@ def main():
     obj_seeds = set([(x,y) for reg in obj_regions for x in range(reg[0],reg[1]+1) for y in range(reg[2],reg[3]+1)])
     back_seeds = set([(x,y) for reg in background_regions for x in range(reg[0],reg[1]+1) for y in range(reg[2],reg[3]+1)])
 
-
     GraphAlgos = GraphAlgorithms(Img.gray_img, back_seeds, obj_seeds)
     G = GraphAlgos.G
+
+    G.show()
     G.min_cut()
+    G.show()
+
     segmented = Img.segmentation(G.self.partition_S_labels)
     plt.imshow(segmented)
 

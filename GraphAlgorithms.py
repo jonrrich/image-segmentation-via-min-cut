@@ -1,5 +1,6 @@
 import numpy as np
 import cv2 as cv
+from Graph import *
 
 
 
@@ -11,18 +12,18 @@ class GraphAlgorithms:
 
         self.B = dict()
 
-        neighbors = [(x-1,y),(x+1,y),(x,y-1),(x,y+1)]
         for x in range(laplacian.shape[0]):
             for y in range(laplacian.shape[1]):
+                neighbors = [(x-1,y),(x+1,y),(x,y-1),(x,y+1)]
                 for n in neighbors:
-
-                    if {(x,y),n} not in self.B:
+                    pair = frozenset({(x,y),n})
+                    if pair not in self.B:
                         diff = abs(lapl_padded[x+1,y+1] - lapl_padded[n[0]+1,n[1]+1])
 
                         if diff==0:
-                            self.B[{(x,y),n}] = -1;
+                            self.B[pair] = -1;
                         else:
-                            self.B[{(x,y),n}] = 1/diff
+                            self.B[pair] = 1/diff
 
         max_B = max(self.B.values())+1
         for i in self.B:
