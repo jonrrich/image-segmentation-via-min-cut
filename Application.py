@@ -50,7 +50,7 @@ def select_regions(img,region_type):
 
 
 def main():
-    Img = Image('images/dog2.jpg')
+    Img = Image('images/dog3.jpg')
     img = Img.img
 
     obj_regions = select_regions(img,"object")
@@ -67,10 +67,10 @@ def main():
         G = GraphAlgos.G
         print("Graph made")
 
-        #G.show()
+        G.show()
         G.min_cut()
         print("Min cut found")
-        #G.show()
+        G.show()
         plt.close()
 
         segmented = Img.segmentation(G.partition_S_labels)
