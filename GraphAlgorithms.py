@@ -45,6 +45,9 @@ class GraphAlgorithms:
         self.sHist = self.sHist / sum(self.sHist)
 
 
+        self.G = create_graph(self, img.shape[0], img.shape[1])
+
+
     def tLinkWeight(pixel, intensity, terminal):
         if terminal == 'T':
             if pixel in tSeeds:

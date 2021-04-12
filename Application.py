@@ -49,13 +49,18 @@ def select_regions(img,region_type):
 
 
 def main():
-    img = plt.imread('images/dog.jpg')
+    Img = Image('images/dog.jpg')
+    img = Img.img
 
     obj_regions = select_regions(img,"object")
     background_regions = select_regions(img,"background")
 
     obj_seeds = set([(x,y) for reg in obj_regions for x in range(reg[0],reg[1]+1) for y in range(reg[2],reg[3]+1)])
     back_seeds = set([(x,y) for reg in background_regions for x in range(reg[0],reg[1]+1) for y in range(reg[2],reg[3]+1)])
+
+
+    GraphAlgos = GraphAlgorithms(Img.gray_img, back_seeds, obj_seeds)
+    G = GraphAlgos.G
 
 
 
