@@ -9,26 +9,26 @@ class GraphAlgorithms:
     def __init__(self, img, tSeeds, sSeeds, lmbda=3, R_bins=50):
         self.img = img
 
-        laplacian = cv.Laplacian(img,cv.CV_64F)
+        #laplacian = cv.Laplacian(img,cv.CV_64F)
 
         self.B = dict()
 
-        for x in range(laplacian.shape[1]):
-            for y in range(laplacian.shape[0]):
+        for x in range(img.shape[1]):
+            for y in range(img.shape[0]):
                 edges = []
-                if y+1 < laplacian.shape[0]:
+                if y+1 < img.shape[0]:
                     edges.append([(x, y), (x, y+1)])
-                if x+1 < laplacian.shape[1]:
+                if x+1 < img.shape[1]:
                     edges.append([(x, y), (x+1, y)])
                 for edge in edges:
-                    diff = abs(laplacian[edge[0][1], edge[0][0]] - laplacian[edge[1][1], edge[0][1]])
-                    self.B[frozenset(edge)] = -1 if diff==0 else 10/diff
+                    diff = abs(img[edge[0][1], edge[0][0]] - img[edge[1][1], edge[0][1]])
+                    self.B[frozenset(edge)] = (255-diff)/255
 
 
         max_B = max(self.B.values())+1
-        for i in self.B:
-            if self.B[i] == -1:
-                self.B[i] = max_B
+        # for i in self.B:
+        #     if self.B[i] == -1:
+        #         self.B[i] = max_B
 
         self.K = max_B+1
         self.lmbda = lmbda
