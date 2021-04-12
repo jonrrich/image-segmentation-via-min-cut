@@ -34,8 +34,8 @@ class Graph:
 
 
     def show(self):
-        nx.draw_networkx_nodes(self.G, self.positions_dict, node_size=200, node_color=self.colors)
-        nx.draw_networkx_labels(self.G, self.positions_dict, font_size=10, labels=self.labels_dict)
+        nx.draw_networkx_nodes(self.G, self.positions_dict, node_size=400, node_color=self.colors)
+        nx.draw_networkx_labels(self.G, self.positions_dict, font_size=6, labels=self.labels_dict)
         nx.draw_networkx_edges(self.G, self.positions_dict, edgelist=self.E, width=self.W, edge_color=self.edge_colors)
         plt.show()
 
@@ -93,7 +93,7 @@ if __name__ == "__main__":
     pixel_vertices = vertices[0:-2]
     terminal_vertices = vertices[-2:]
 
-    labels = list(range(imgw * imgh)) + ['S', 'T']
+    labels = list([(i%imgw, i//imgw) for i in range(imgw * imgh)]) + ['S', 'T']
     labels_dict = dict(zip(vertices, labels))
 
     positions = [((i%imgw), -(i//imgw+2)) for i in range(imgw * imgh)] + \
@@ -120,7 +120,7 @@ if __name__ == "__main__":
             edges.append(edge)
             weights.append(nLinkWeight(labels_dict[edge[0]], labels_dict[edge[1]]))
 
-    colors = ['blue'] * (imgw * imgh) + ['red', 'red']
+    colors = ['#add8e6'] * (imgw * imgh) + ['#ffcccb', '#ffcccb']
     edge_colors = ['red' if edge[0] in terminal_vertices or edge[1] in terminal_vertices else 'blue' for edge in edges]
 
     G = Graph(vertices, edges, weights, labels, positions, colors, edge_colors)
