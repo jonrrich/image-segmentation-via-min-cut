@@ -35,8 +35,8 @@ class GraphAlgorithms:
         self.K = max_B+1
         self.lmbda = lmbda
 
-        self.tSeeds = tSeeds #background
-        self.sSeeds = sSeeds #object
+        self.tSeeds = set(tSeeds) #background
+        self.sSeeds = set(sSeeds) #object
 
         tVals = [img[i] for i in self.tSeeds]
         sVals = [img[i] for i in self.sSeeds]
@@ -64,7 +64,6 @@ class GraphAlgorithms:
                 R = -np.log(prob)*self.lmbda
                 return R
 
-        # FIX SO WE ITERATE THRU SEEDS INSTEAD OF SEARCHING LISTS
         if terminal == 'S':
             if pixel in self.sSeeds:
                 return self.K
