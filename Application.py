@@ -61,7 +61,9 @@ def main():
 
     GraphAlgos = GraphAlgorithms(Img.gray_img, back_seeds, obj_seeds)
     G = GraphAlgos.G
-
+    G.min_cut()
+    segmented = Img.segmentation(G.self.partition_S_labels)
+    plt.imshow(segmented)
 
 
 if __name__ == "__main__":
