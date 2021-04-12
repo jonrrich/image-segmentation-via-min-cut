@@ -87,8 +87,8 @@ class GraphAlgorithms:
         labels = list([(i%imgw, i//imgw) for i in range(imgw * imgh)]) + ['S', 'T']
         labels_dict = dict(zip(vertices, labels))
 
-        positions = [((i%imgw), -(i//imgw+2)) for i in range(imgw * imgh)] + \
-                    [((imgw-1)/2, 0), ((imgw-1)/2, -(imgh+3))]
+        positions = [((i//imgw), -(i%imgw+2)) for i in range(imgw * imgh)] + \
+                    [((imgh-1)/2, 0), ((imgh-1)/2, -(imgw+3))]
 
         edges = []
         weights = []
