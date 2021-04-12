@@ -7,6 +7,8 @@ from Graph import *
 class GraphAlgorithms:
 
     def __init__(self, img, tSeeds, sSeeds, lmbda=1, R_bins=50):
+        self.img = img
+
         laplacian = cv.Laplacian(img,cv.CV_64F)
         lapl_padded = np.pad(laplacian,1,mode='edge')
 
@@ -49,7 +51,7 @@ class GraphAlgorithms:
         self.G = self.create_graph(img.shape[0], img.shape[1])
 
 
-    def tLinkWeight(pixel, intensity, terminal):
+    def tLinkWeight(self, pixel, intensity, terminal):
         if terminal == 'T':
             if pixel in tSeeds:
                 return self.K
@@ -58,7 +60,7 @@ class GraphAlgorithms:
             else:
                 hist, bin_edges = np.histogram(intensity, self.bin_edges)
                 idx = np.where(hist==1)[0][0]
-                return -np.log(self.sHist[idx])*self.lmbda
+                return -np.log(self.sHist[idx]+1)*self.lmbda
 
         # FIX SO WE ITERATE THRU SEEDS INSTEAD OF SEARCHING LISTS
         if terminal == 'S':
@@ -69,7 +71,7 @@ class GraphAlgorithms:
             else:
                 hist, bin_edges = np.histogram(intensity, self.bin_edges)
                 idx = np.where(hist==1)[0][0]
-                return -np.log(self.tHist[idx])*self.lmbda
+                return -np.log(self.tHist[idx]+1)*self.lmbda
 
 
     def nLinkWeight(self, pixel1, pixel2):
@@ -95,19 +97,20 @@ class GraphAlgorithms:
             for terminal_vertex in terminal_vertices:
                 edge = (i, terminal_vertex)
                 edges.append(edge)
-                weights.append(tLinkWeight(labels_dict[edge[0]], labels_dict[edge[1]]))
+                pixel = labels_dict[edge[0]]
+                weights.append(self.tLinkWeight(pixel, self.img[pixel], labels_dict[edge[1]]))
 
             # n-links horizontally
             if (i+1) < imgw * imgh and (i+1) % imgw != 0:
                 edge = (i, i+1)
                 edges.append(edge)
-                weights.append(nLinkWeight(labels_dict[edge[0]], labels_dict[edge[1]]))
+                weights.append(self.nLinkWeight(labels_dict[edge[0]], labels_dict[edge[1]]))
 
             # n-links vertically
             if (i+imgw) < imgw * imgh:
                 edge = (i, i+imgw)
                 edges.append(edge)
-                weights.append(nLinkWeight(labels_dict[edge[0]], labels_dict[edge[1]]))
+                weights.append(self.nLinkWeight(labels_dict[edge[0]], labels_dict[edge[1]]))
 
         colors = ['#add8e6'] * (imgw * imgh) + ['#ffcccb', '#ffcccb']
         edge_colors = ['red' if edge[0] in terminal_vertices or edge[1] in terminal_vertices else 'blue' for edge in edges]

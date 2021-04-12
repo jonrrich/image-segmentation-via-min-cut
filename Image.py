@@ -9,7 +9,7 @@ class Image:
 
     def segmentation(self,obj_pixels):
         segmented = np.zeros_like(self.img)
-        obj_pixels = np.delete(obj_pixels, np.where(arr == "S"))
+        obj_pixels = [x for x in obj_pixels if x != 'S']
 
         for pixel in obj_pixels:
             segmented[pixel] = self.img[pixel]
