@@ -61,7 +61,7 @@ def main():
     back_seeds = set([(x,y) for reg in background_regions for x in range(reg[0],reg[1]+1) for y in range(reg[2],reg[3]+1)])
     print("Seeds created")
 
-    lm_list = np.array([i for i in range(0,30,3)])/10
+    lm_list = np.array([i for i in range(0,20,5)])/10
     for lm in lm_list:
         GraphAlgos = GraphAlgorithms(Img.gray_img, back_seeds, obj_seeds, lmbda=lm)
         G = GraphAlgos.G
@@ -72,7 +72,6 @@ def main():
         print("Min cut found")
         #G.show()
         plt.close()
-
 
         segmented = Img.segmentation(G.partition_S_labels)
         plt.imshow(segmented)
