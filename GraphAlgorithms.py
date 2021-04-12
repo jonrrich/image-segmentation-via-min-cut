@@ -54,7 +54,7 @@ class GraphAlgorithms:
             else:
                 hist, bin_edges = np.histogram(intensity, self.bin_edges)
                 idx = np.where(hist==1)[0][0]
-                return -np.log(self.sHist[idx])
+                return -np.log(self.sHist[idx])*self.lmbda
 
 
         if terminal == 'S':
@@ -65,7 +65,7 @@ class GraphAlgorithms:
             else:
                 hist, bin_edges = np.histogram(intensity, self.bin_edges)
                 idx = np.where(hist==1)[0][0]
-                return -np.log(self.tHist[idx])
+                return -np.log(self.tHist[idx])*self.lmbda
 
 
     def nLinkWeight(self, pixel1, pixel2):
