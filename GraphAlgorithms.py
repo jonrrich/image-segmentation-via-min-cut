@@ -59,8 +59,9 @@ class GraphAlgorithms:
                 return 0
             else:
                 hist, bin_edges = np.histogram(intensity, self.bin_edges)
-                idx = np.where(hist==1)[0][0]
-                R = np.log(self.sHist[idx]+1)*self.lmbda
+                idx = -np.where(hist==1)[0][0]
+                prob = 1e-6 if self.sHist[idx]==0 else self.sHist[idx]
+                R = -np.log(prob)*self.lmbda
                 return R
 
         # FIX SO WE ITERATE THRU SEEDS INSTEAD OF SEARCHING LISTS
@@ -72,7 +73,8 @@ class GraphAlgorithms:
             else:
                 hist, bin_edges = np.histogram(intensity, self.bin_edges)
                 idx = np.where(hist==1)[0][0]
-                R = np.log(self.tHist[idx]+1)*self.lmbda
+                prob = 1e-6 if self.tHist[idx]==0 else self.tHist[idx]
+                R = -np.log(prob)*self.lmbda
                 return R
 
 
