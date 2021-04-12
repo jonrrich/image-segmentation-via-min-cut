@@ -41,7 +41,6 @@ def select_regions(img,region_type):
         color = 'r' if region_type=="object" else 'b'
         plt.gca().add_patch(Rectangle((min_x,min_y),max_x-min_x,max_y-min_y,linewidth=1,edgecolor=color,facecolor=color))
 
-
         message('Mouse click to select another region\nKey click to move on')
 
         if plt.waitforbuttonpress():
@@ -57,14 +56,6 @@ def main():
 
     obj_seeds = set([(x,y) for reg in obj_regions for x in range(reg[0],reg[1]+1) for y in range(reg[2],reg[3]+1)])
     back_seeds = set([(x,y) for reg in background_regions for x in range(reg[0],reg[1]+1) for y in range(reg[2],reg[3]+1)])
-
-    print("Object Seeds:")
-    print(obj_seeds)
-
-    print("----------------")
-    print("Background Seeds:")
-    print(back_seeds)
-
 
 
 
