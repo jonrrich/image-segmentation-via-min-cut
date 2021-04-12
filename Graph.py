@@ -38,8 +38,8 @@ class Graph:
 
 
     def show(self):
-        nx.draw_networkx_nodes(self.G, self.positions_dict, node_size=400, node_color=self.colors)
-        nx.draw_networkx_labels(self.G, self.positions_dict, font_size=6, labels=self.labels_dict)
+        nx.draw_networkx_nodes(self.G, self.positions_dict, node_size=1, node_color=self.colors)
+        #nx.draw_networkx_labels(self.G, self.positions_dict, font_size=6, labels=self.labels_dict)
         nx.draw_networkx_edges(self.G, self.positions_dict, edgelist=self.E, width=self.W, edge_color=self.edge_colors)
         plt.show()
 
