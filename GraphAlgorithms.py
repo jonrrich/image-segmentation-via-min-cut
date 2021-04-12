@@ -113,7 +113,9 @@ class GraphAlgorithms:
                 weights.append(self.nLinkWeight(labels_dict[edge[0]], labels_dict[edge[1]]))
 
         colors = ['#add8e6'] * (imgw * imgh) + ['#ffcccb', '#ffcccb']
-        edge_colors = ['red' if edge[0] in terminal_vertices or edge[1] in terminal_vertices else 'blue' for edge in edges]
+        edge_colors = ['red' if labels[edge[0]] == 'S' or labels[edge[1]] == 'S'
+                        else 'blue' if labels[edge[0]] == 'T' or labels[edge[1]] == 'T'
+                        else 'black' for edge in edges]
 
         G = Graph(vertices, edges, weights, labels, positions, colors, edge_colors)
 
