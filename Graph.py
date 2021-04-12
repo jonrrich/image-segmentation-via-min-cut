@@ -1,5 +1,6 @@
 import networkx as nx
 import matplotlib.pyplot as plt
+import numpy as np
 
 class Graph:
     def __init__(self, vertices, edges, weights, labels, positions, colors, edge_colors):
@@ -38,9 +39,12 @@ class Graph:
 
 
     def show(self):
+        scaled_weights = np.log(np.log(np.array(self.W) + 1) + 1)
+        scaled_weights = scaled_weights / np.max(scaled_weights) * 10
+
         nx.draw_networkx_nodes(self.G, self.positions_dict, node_size=1, node_color=self.colors)
         #nx.draw_networkx_labels(self.G, self.positions_dict, font_size=6, labels=self.labels_dict)
-        nx.draw_networkx_edges(self.G, self.positions_dict, edgelist=self.E, width=self.W, edge_color=self.edge_colors)
+        nx.draw_networkx_edges(self.G, self.positions_dict, edgelist=self.E, width=scaled_weights, edge_color=self.edge_colors)
         plt.show()
 
     def min_cut(self, start_from_previous_graph=True):
