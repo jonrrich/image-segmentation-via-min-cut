@@ -55,7 +55,7 @@ def main():
 
     obj_regions = select_regions(img,"object")
     background_regions = select_regions(img,"background")
-    plt.close('all')
+    plt.close()
 
     obj_seeds = set([(x,y) for reg in obj_regions for x in range(reg[0],reg[1]+1) for y in range(reg[2],reg[3]+1)])
     back_seeds = set([(x,y) for reg in background_regions for x in range(reg[0],reg[1]+1) for y in range(reg[2],reg[3]+1)])
@@ -69,9 +69,12 @@ def main():
     G.min_cut()
     print("Min cut found")
     G.show()
+    plt.close()
+
 
     segmented = Img.segmentation(G.partition_S_labels)
     plt.imshow(segmented)
+    plt.show()
 
 
 if __name__ == "__main__":
