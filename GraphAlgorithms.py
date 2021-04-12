@@ -81,7 +81,7 @@ class GraphAlgorithms:
         pixel_vertices = vertices[0:-2]
         terminal_vertices = vertices[-2:]
 
-        labels = list(range(imgw * imgh)) + ['S', 'T']
+        labels = list([(i%imgw, i//imgw) for i in range(imgw * imgh)]) + ['S', 'T']
         labels_dict = dict(zip(vertices, labels))
 
         positions = [((i%imgw), -(i//imgw+2)) for i in range(imgw * imgh)] + \
@@ -108,7 +108,7 @@ class GraphAlgorithms:
                 edges.append(edge)
                 weights.append(nLinkWeight(labels_dict[edge[0]], labels_dict[edge[1]]))
 
-        colors = ['blue'] * (imgw * imgh) + ['red', 'red']
+        colors = ['#add8e6'] * (imgw * imgh) + ['#ffcccb', '#ffcccb']
         edge_colors = ['red' if edge[0] in terminal_vertices or edge[1] in terminal_vertices else 'blue' for edge in edges]
 
         G = Graph(vertices, edges, weights, labels, positions, colors, edge_colors)
