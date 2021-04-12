@@ -43,7 +43,18 @@ class Graph:
         R = nx.algorithms.flow.boykov_kolmogorov(self.G, self.vertices_dict['S'], self.vertices_dict['T'], capacity='weight', residual=self.R if start_from_previous_graph else None)
         self.R = R
         source_tree, _ = R.graph["trees"]
-        source_tree = set(source_tree)
+        partition_1 = set(source_tree)
+        partition_2 = set(self.G) - partition_1
+
+        if (self.vertices_dict['S'] in partition_1):
+            self.partition_S = partition_1
+            self.partition_T = partition_2
+        else:
+            self.partition_S = partition_2
+            self.partition_T = partition_1
+
+        self.partition_S_labels = [self.labels_dict[v] for v in self.partition_S]
+        self.partition_T_labels = [self.labels_dict[v] for v in self.partition_T]
 
         E_new = []
         W_new = []
@@ -53,8 +64,8 @@ class Graph:
             weight = self.W[i]
             edge_color = self.edge_colors[i]
 
-            if (edge[0] in source_tree and edge[1] in source_tree) or \
-               (edge[0] not in source_tree and edge[1] not in source_tree):
+            if (edge[0] in partition_1 and edge[1] in partition_1) or \
+               (edge[0] not in partition_1 and edge[1] not in partition_1):
                E_new.append(edge)
                W_new.append(weight)
                edge_colors_new.append(edge_color)
@@ -67,8 +78,8 @@ class Graph:
 
 
 
-tSeeds = [4, 18, 9]
-sSeeds = [6, 11, 15]
+tSeeds = [(1,2), (3,4), (3,3)]
+sSeeds = [(3,1), (3,2)]
 
 def tLinkWeight(pixel, terminal):
     if terminal == 'T':
