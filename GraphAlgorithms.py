@@ -22,7 +22,7 @@ class GraphAlgorithms:
                     edges.append([(x, y), (x+1, y)])
                 for edge in edges:
                     diff = abs(laplacian[edge[0][1], edge[0][0]] - laplacian[edge[1][1], edge[0][1]])
-                    self.B[frozenset(edge)] = -1 if diff==0 else diff
+                    self.B[frozenset(edge)] = -1 if diff==0 else 10/diff
 
 
         max_B = max(self.B.values())+1
