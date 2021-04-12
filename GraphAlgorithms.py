@@ -75,32 +75,35 @@ class GraphAlgorithms:
 
     def create_graph(self, imgw, imgh):
         vertices = list(range(imgw * imgh + 2))
-        terminal_vertices = [vertices[-2], vertices[-1]]
+        pixel_vertices = vertices[0:-2]
+        terminal_vertices = vertices[-2:]
+
         labels = list(range(imgw * imgh)) + ['S', 'T']
+        labels_dict = dict(zip(vertices, labels))
 
         positions = [((i%imgw), -(i//imgw+2)) for i in range(imgw * imgh)] + \
                     [((imgw-1)/2, 0), ((imgw-1)/2, -(imgh+3))]
 
         edges = []
         weights = []
-        for i in range(imgw * imgh):
+        for i in pixel_vertices:
             # t-links
             for terminal_vertex in terminal_vertices:
                 edge = (i, terminal_vertex)
                 edges.append(edge)
-                weights.append(tLinkWeight(labels[edge[0]], labels[edge[1]]))
+                weights.append(tLinkWeight(labels_dict[edge[0]], labels_dict[edge[1]]))
 
             # n-links horizontally
             if (i+1) < imgw * imgh and (i+1) % imgw != 0:
                 edge = (i, i+1)
                 edges.append(edge)
-                weights.append(nLinkWeight(labels[edge[0]], labels[edge[1]]))
+                weights.append(nLinkWeight(labels_dict[edge[0]], labels_dict[edge[1]]))
 
             # n-links vertically
             if (i+imgw) < imgw * imgh:
                 edge = (i, i+imgw)
                 edges.append(edge)
-                weights.append(nLinkWeight(labels[edge[0]], labels[edge[1]]))
+                weights.append(nLinkWeight(labels_dict[edge[0]], labels_dict[edge[1]]))
 
         colors = ['blue'] * (imgw * imgh) + ['red', 'red']
         edge_colors = ['red' if edge[0] in terminal_vertices or edge[1] in terminal_vertices else 'blue' for edge in edges]
