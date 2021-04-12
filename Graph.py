@@ -31,6 +31,10 @@ class Graph:
         self.positions_dict = dict(zip(vertices, positions))
 
         self.R = None
+        self.partition_S = None
+        self.partition_T = None
+        self.partition_S_labels = None
+        self.partition_T_labels = None
 
 
     def show(self):
