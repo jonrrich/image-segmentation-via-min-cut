@@ -53,9 +53,9 @@ class GraphAlgorithms:
 
     def tLinkWeight(self, pixel, intensity, terminal):
         if terminal == 'T':
-            if pixel in tSeeds:
+            if pixel in self.tSeeds:
                 return self.K
-            elif pixel in sSeeds:
+            elif pixel in self.sSeeds:
                 return 0
             else:
                 hist, bin_edges = np.histogram(intensity, self.bin_edges)
@@ -64,9 +64,9 @@ class GraphAlgorithms:
 
         # FIX SO WE ITERATE THRU SEEDS INSTEAD OF SEARCHING LISTS
         if terminal == 'S':
-            if pixel in sSeeds:
+            if pixel in self.sSeeds:
                 return self.K
-            elif pixel in tSeeds:
+            elif pixel in self.tSeeds:
                 return 0
             else:
                 hist, bin_edges = np.histogram(intensity, self.bin_edges)
