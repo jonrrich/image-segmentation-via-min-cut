@@ -50,7 +50,7 @@ def select_regions(img,region_type):
 
 
 def main():
-    Img = Image('images/dog3.jpg')
+    Img = Image('images/dog2.jpg')
     img = Img.img
 
     obj_regions = select_regions(img,"object")
@@ -61,21 +61,26 @@ def main():
     back_seeds = set([(x,y) for reg in background_regions for x in range(reg[0],reg[1]+1) for y in range(reg[2],reg[3]+1)])
     print("Seeds created")
 
-    GraphAlgos = GraphAlgorithms(Img.gray_img, back_seeds, obj_seeds)
-    G = GraphAlgos.G
-    print("Graph made")
+    lm_list = np.array([i for i in range(0,30,3)])/10
+    for lm in lm_list:
+        GraphAlgos = GraphAlgorithms(Img.gray_img, back_seeds, obj_seeds, lmbda=lm)
+        G = GraphAlgos.G
+        print("Graph made")
 
-    G.show()
-    G.min_cut()
-    print("Min cut found")
-    G.show()
-    plt.close()
+        #G.show()
+        G.min_cut()
+        print("Min cut found")
+        #G.show()
+        plt.close()
 
 
-    segmented = Img.segmentation(G.partition_S_labels)
-    plt.imshow(segmented)
-    plt.show()
+        segmented = Img.segmentation(G.partition_S_labels)
+        plt.imshow(segmented)
+        plt.title("Lambda = " + str(lm), fontsize=16)
+        plt.draw()
 
+        plt.show()
+        plt.close()
 
 if __name__ == "__main__":
     main()

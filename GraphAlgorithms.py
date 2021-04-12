@@ -6,7 +6,7 @@ from Graph import *
 
 class GraphAlgorithms:
 
-    def __init__(self, img, tSeeds, sSeeds, lmbda=1, R_bins=50):
+    def __init__(self, img, tSeeds, sSeeds, lmbda=3, R_bins=50):
         self.img = img
 
         laplacian = cv.Laplacian(img,cv.CV_64F)
