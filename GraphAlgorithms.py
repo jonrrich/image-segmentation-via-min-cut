@@ -60,7 +60,7 @@ class GraphAlgorithms:
                 idx = np.where(hist==1)[0][0]
                 return -np.log(self.sHist[idx])*self.lmbda
 
-
+        # FIX SO WE ITERATE THRU SEEDS INSTEAD OF SEARCHING LISTS
         if terminal == 'S':
             if pixel in sSeeds:
                 return self.K
@@ -73,7 +73,7 @@ class GraphAlgorithms:
 
 
     def nLinkWeight(self, pixel1, pixel2):
-        return self.B[{pixel1,pixel2}]
+        return self.B[frozenset({pixel1,pixel2})]
 
 
 
