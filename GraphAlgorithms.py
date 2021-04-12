@@ -11,7 +11,7 @@ class GraphAlgorithms:
 
         self.B = dict()
 
-        neighbors = [(x+1,y+1),(x+1,y),(x+1,y-1),(x,y+1),(x,y-1),(x-1,y+1),(x-1,y),(x-1,y-1)]
+        neighbors = [(x-1,y),(x+1,y),(x,y-1),(x,y+1)]
         for x in range(laplacian.shape[0]):
             for y in range(laplacian.shape[1]):
                 for n in neighbors:
