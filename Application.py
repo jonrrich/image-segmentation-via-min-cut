@@ -93,7 +93,7 @@ def run_img():
     back_seeds = set([(x,y) for reg in background_regions for y in range(reg[0],reg[1]+1) for x in range(reg[2],reg[3]+1)])
     print("Seeds created")
 
-    GraphAlgos = GraphAlgorithms([Img.gray_img], back_seeds, obj_seeds)
+    GraphAlgos = GraphAlgorithms(np.array([Img.gray_img]), back_seeds, obj_seeds)
     G = GraphAlgos.G
     print("Graph made")
     #G.show()
@@ -125,7 +125,7 @@ def run_video():
 
         message('Mouse click to select seeds\nKey click for next frame')
         if plt.waitforbuttonpress():
-            return continue
+            continue
 
         obj_regions = select_regions(img,"object")
         background_regions = select_regions(img,"background")
@@ -136,7 +136,7 @@ def run_video():
 
     print("Seeds created")
 
-    GraphAlgos = GraphAlgorithms(frames, back_seeds, obj_seeds)
+    GraphAlgos = GraphAlgorithms(np.array(frames), back_seeds, obj_seeds)
     G = GraphAlgos.G
     print("Graph made")
     #G.show()
@@ -155,4 +155,6 @@ def run_video():
 
 
 if __name__ == "__main__":
-    main()
+    run_img()
+    #run_video()
+    #test_lambda()

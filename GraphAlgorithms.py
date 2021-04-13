@@ -14,6 +14,8 @@ class GraphAlgorithms:
         self.tSeeds = set(tSeeds) #background
         self.sSeeds = set(sSeeds) #object
 
+        self.frames = frames
+
         self.B = dict()
         if frames.shape[2]>1:
             self.construct_B_vid()
@@ -64,8 +66,13 @@ class GraphAlgorithms:
     def construct_B_vid(self):
         laplacian = []
         for z in range(self.frames.shape[0]):
+            img = self.frames[z]
             laplacian.append(cv.Laplacian(img,cv.CV_64F))
 
+        laplacian = np.array(laplacian)
+        print(laplacian.shape)
+
+        for z in range(self.frames.shape[0]):
             for x in range(laplacian.shape[2]):
                 for y in range(laplacian.shape[1]):
                     edges = []
