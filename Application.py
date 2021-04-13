@@ -50,7 +50,7 @@ def select_regions(img,region_type):
 
 
 def main():
-    Img = Image('images/dog3.jpg')
+    Img = Image('images/synthetic.jpg')
     img = Img.img
 
     obj_regions = select_regions(img,"object")
