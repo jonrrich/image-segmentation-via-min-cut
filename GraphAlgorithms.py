@@ -1,6 +1,7 @@
 import numpy as np
 import cv2 as cv
 from Graph import *
+import matplotlib.pyplot as plt
 
 
 
@@ -21,8 +22,8 @@ class GraphAlgorithms:
                 if x+1 < laplacian.shape[1]:
                     edges.append([(x, y), (x+1, y)])
                 for edge in edges:
-                    diff = abs(laplacian[edge[0][1], edge[0][0]] - laplacian[edge[1][1], edge[0][1]])
-                    self.B[frozenset(edge)] = -1 if diff==0 else 10/diff
+                    laplacian_edge = (abs(laplacian[edge[0][1], edge[0][0]]) + abs(laplacian[edge[1][1], edge[0][1]]))/2
+                    self.B[frozenset(edge)] = -1 if laplacian_edge==0 else 1/laplacian_edge
 
 
         max_B = max(self.B.values())+1
