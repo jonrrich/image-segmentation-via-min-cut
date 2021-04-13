@@ -111,13 +111,13 @@ def run_img():
 
 def run_video():
     dir = 'walking_man'
-    num_frames = len(os.listdir(dir))
+    num_frames = len([f for f in os.listdir(dir) if f[0]!='.'])
 
     obj_seeds = []
     back_seeds = []
     frames = []
     for frame_idx in range(num_frames):
-        name = dir + "/frame"+str(frame_idx+1)+".png"
+        name = dir + "/frame"+str(frame_idx+1)+".jpg"
 
         Img = Image(name)
         img = Img.img
@@ -157,6 +157,6 @@ def run_video():
 
 
 if __name__ == "__main__":
-    run_img()
-    #run_video()
+    #run_img()
+    run_video()
     #test_lambda()
