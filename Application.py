@@ -4,6 +4,7 @@ from matplotlib.patches import Rectangle
 from Image import *
 from GraphAlgorithms import *
 import os
+import math
 
 
 # Some code from tutorial: https://matplotlib.org/stable/gallery/event_handling/ginput_manual_clabel_sgskip.html#sphx-glr-gallery-event-handling-ginput-manual-clabel-sgskip-py
@@ -15,13 +16,34 @@ def message(s):
 
 
 def select_regions(img,region_type):
-    plt.imshow(img)
+    fig, ax = plt.subplots()
+    ax.imshow(img)
     all_regions = []
 
     while True:
         message("Define rectangular " + region_type + " region")
         pts = plt.ginput(n=2,timeout=-1)
-        #print(pts)
+
+        print(pts)
+
+        for i in (0,1):
+            pts[i] = [pts[i][0]+.5, pts[i][1]+.5]
+
+        if pts[0][0] > pts[1][0]:
+            pts[0][0] = math.ceil(pts[0][0])
+            pts[1][0] = math.floor(pts[1][0])
+        else:
+            pts[0][0] = math.floor(pts[0][0])
+            pts[1][0] = math.ceil(pts[1][0])
+
+        if pts[0][1] > pts[1][1]:
+            pts[0][1] = math.ceil(pts[0][1])
+            pts[1][1] = math.floor(pts[1][1])
+        else:
+            pts[0][1] = math.floor(pts[0][1])
+            pts[1][1] = math.ceil(pts[1][1])
+
+        print(pts)
 
         if pts[0][0] < pts[1][0]:
             min_y = pts[0][0]
@@ -42,7 +64,7 @@ def select_regions(img,region_type):
 
         # draw rectangle
         color = 'r' if region_type=="object" else 'b'
-        plt.gca().add_patch(Rectangle((min_y,min_x),max_y-min_y,max_x-min_x,linewidth=1,edgecolor=color,facecolor=color))
+        ax.add_patch(Rectangle((min_y-.5,min_x-.5),max_y-min_y,max_x-min_x,linewidth=1,edgecolor=color,facecolor=color))
 
         message('Mouse click to select another region\nKey click to move on')
 
