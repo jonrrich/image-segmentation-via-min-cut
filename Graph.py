@@ -1,6 +1,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
+import random
 
 class Graph:
     def __init__(self, vertices, edges, weights, labels, positions, colors, edge_colors):
@@ -39,11 +40,11 @@ class Graph:
 
 
     def show(self):
-        scaled_weights = np.log(np.log(np.log(np.array(self.W) + 1) + 1) + 1)
+        scaled_weights = np.log(np.log(np.array(self.W) + 1) + 1)
         scaled_weights = scaled_weights / np.max(scaled_weights) * 5
 
-        nx.draw_networkx_nodes(self.G, self.positions_dict, node_size=1, node_color=self.colors)
-        #nx.draw_networkx_labels(self.G, self.positions_dict, font_size=6, labels=self.labels_dict)
+        nx.draw_networkx_nodes(self.G, self.positions_dict, node_size=5, node_color=self.colors)
+        # nx.draw_networkx_labels(self.G, self.positions_dict, font_size=6, labels=self.labels_dict)
         nx.draw_networkx_edges(self.G, self.positions_dict, edgelist=self.E, width=scaled_weights, edge_color=self.edge_colors)
         plt.show()
 
@@ -95,58 +96,68 @@ sSeeds = [(3,1), (3,2)]
 def tLinkWeight(pixel, terminal):
     if terminal == 'T':
         if pixel in tSeeds:
-            return 10
+            return 100
     if terminal == 'S':
         if pixel in sSeeds:
-            return 10
+            return 100
     return 1
 
 
 def nLinkWeight(pixel1, pixel2):
-    return 1
+    return random.choice([1, 2, 3])
 
 
 
 if __name__ == "__main__":
-    imgw = 4
-    imgh = 5
+    imgw = 3
+    imgh = 3
+    imgn = 3
 
-    vertices = list(range(imgw * imgh + 2))
+    vertices = list(range(imgw * imgh * imgn + 2))
     pixel_vertices = vertices[0:-2]
     terminal_vertices = vertices[-2:]
 
-    labels = list([(i%imgw, i//imgw) for i in range(imgw * imgh)]) + ['S', 'T']
+    labels = list([((i%(imgw*imgh))%imgw, (i%(imgw*imgh))//imgw, i//(imgw*imgh)) for i in range(imgw * imgh * imgn)]) + ['S', 'T']
     labels_dict = dict(zip(vertices, labels))
 
-    positions = [((i//imgw), -(i%imgw+2)) for i in range(imgw * imgh)] + \
-                [((imgh-1)/2, 0), ((imgh-1)/2, -(imgw+3))]
+    positions = [( ((i%(imgw*imgh))%imgw) + .2*(i//(imgw*imgh)), -((i%(imgw*imgh))//imgw+2) + .2*(i//(imgw*imgh)) ) for i in range(imgw * imgh * imgn)] + \
+                [((imgw-1)/2 + .1*(imgn-1), 0), ((imgw-1)/2 + .1*(imgn-1), -(imgh+3))]
 
     edges = []
+    edge_colors = []
     weights = []
     for i in pixel_vertices:
         # t-links
         for terminal_vertex in terminal_vertices:
             edge = (i, terminal_vertex)
             edges.append(edge)
-            weights.append(tLinkWeight(labels_dict[edge[0]], labels_dict[edge[1]]))
+            edge_colors.append('red' if labels_dict[terminal_vertex] == 'S' else 'blue')
+            pixel = labels_dict[edge[0]]
+            weights.append(tLinkWeight(pixel, labels_dict[edge[1]]))
 
         # n-links horizontally
-        if (i+1) < imgw * imgh and (i+1) % imgw != 0:
+        if (i%(imgw*imgh))%imgw < imgw - 1:
             edge = (i, i+1)
             edges.append(edge)
+            edge_colors.append('black')
             weights.append(nLinkWeight(labels_dict[edge[0]], labels_dict[edge[1]]))
 
         # n-links vertically
-        if (i+imgw) < imgw * imgh:
+        if i%(imgw*imgh) < imgw * (imgh-1):
             edge = (i, i+imgw)
             edges.append(edge)
+            edge_colors.append('black')
             weights.append(nLinkWeight(labels_dict[edge[0]], labels_dict[edge[1]]))
 
-    colors = ['#add8e6'] * (imgw * imgh) + ['#ffcccb', '#ffcccb']
-    edge_colors = ['red' if edge[0] in terminal_vertices or edge[1] in terminal_vertices else 'blue' for edge in edges]
+        # n-links between frames
+        if i+imgw*imgh < imgw * imgh * imgn:
+            edge = (i, i+imgw*imgh)
+            edges.append(edge)
+            edge_colors.append('grey')
+            weights.append(nLinkWeight(labels_dict[edge[0]], labels_dict[edge[1]]))
+
+    colors = ['#add8e6'] * (imgw * imgh * imgn) + ['#ffcccb', '#ffcccb']
 
     G = Graph(vertices, edges, weights, labels, positions, colors, edge_colors)
-    G.show()
 
-    G.min_cut(start_from_previous_graph=False)
     G.show()
