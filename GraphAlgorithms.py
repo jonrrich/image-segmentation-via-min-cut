@@ -17,20 +17,14 @@ class GraphAlgorithms:
         self.frames = frames
 
         self.B = dict()
-        if frames.shape[0]>1:
-            self.construct_B_vid()
+        self.construct_B_vid()
 
-            tVals = [frames[i[2], i[1], i[0]] for i in self.tSeeds]
-            sVals = [frames[i[2], i[1], i[0]] for i in self.sSeeds]
+        tVals = [frames[i[2], i[1], i[0]] for i in self.tSeeds]
+        sVals = [frames[i[2], i[1], i[0]] for i in self.sSeeds]
 
-        else:
+        if frames.shape[0]==1:
             img = frames[0]
             self.img = img
-            self.construct_B_img(img)
-
-            tVals = [img[i[1], i[0]] for i in self.tSeeds]
-            sVals = [img[i[1], i[0]] for i in self.sSeeds]
-
 
         self.tHist, self.bin_edges = np.histogram(tVals,bins=R_bins,range=(0,255))
         self.tHist = self.tHist / sum(self.tHist)
@@ -42,28 +36,6 @@ class GraphAlgorithms:
         self.G = self.create_graph()
 
 
-    def construct_B_img(self,img):
-        laplacian = cv.Laplacian(img,cv.CV_64F)
-
-        for x in range(laplacian.shape[1]):
-            for y in range(laplacian.shape[0]):
-                edges = []
-                if y+1 < laplacian.shape[0]:
-                    edges.append([(x, y), (x, y+1)])
-                if x+1 < laplacian.shape[1]:
-                    edges.append([(x, y), (x+1, y)])
-                for edge in edges:
-                    laplacian_edge = (abs(laplacian[edge[0][1], edge[0][0]]) + abs(laplacian[edge[1][1], edge[1][0]]))/2
-                    self.B[frozenset(edge)] = -1 if laplacian_edge==0 else 1/laplacian_edge
-
-        max_B = max(self.B.values())+1
-        for i in self.B:
-            if self.B[i] == -1:
-                self.B[i] = max_B
-
-        self.K = max_B+1
-
-
     def construct_B_vid(self):
         laplacian = []
         for z in range(self.frames.shape[0]):
@@ -71,7 +43,6 @@ class GraphAlgorithms:
             laplacian.append(cv.Laplacian(img,cv.CV_64F))
 
         laplacian = np.array(laplacian)
-        print(laplacian.shape)
 
         for z in range(self.frames.shape[0]):
             for x in range(laplacian.shape[2]):
@@ -107,6 +78,7 @@ class GraphAlgorithms:
                 idx = -np.where(hist==1)[0][0]
                 prob = 1e-6 if self.sHist[idx]==0 else self.sHist[idx]
                 R = -np.log(prob)*self.lmbda
+
                 return R
 
         if terminal == 'S':
@@ -151,28 +123,36 @@ class GraphAlgorithms:
                 edges.append(edge)
                 edge_colors.append('red' if labels_dict[terminal_vertex] == 'S' else 'blue')
                 pixel = labels_dict[edge[0]]
-                weights.append(tLinkWeight(pixel, labels_dict[edge[1]]))
+
+                w = self.tLinkWeight(pixel, self.frames[pixel[2], pixel[1],pixel[0]], labels_dict[edge[1]])
+                weights.append(w)
 
             # n-links horizontally
             if (i%(imgw*imgh))%imgw < imgw - 1:
                 edge = (i, i+1)
                 edges.append(edge)
                 edge_colors.append('black')
-                weights.append(self.tLinkWeight(pixel, self.frames[pixel[2], pixel[1],pixel[0]], labels_dict[edge[1]]))
+
+                w = self.nLinkWeight(labels_dict[edge[0]], labels_dict[edge[1]])
+                weights.append(w)
 
             # n-links vertically
             if i%(imgw*imgh) < imgw * (imgh-1):
                 edge = (i, i+imgw)
                 edges.append(edge)
                 edge_colors.append('black')
-                weights.append(self.nLinkWeight(labels_dict[edge[0]], labels_dict[edge[1]]))
+
+                w = self.nLinkWeight(labels_dict[edge[0]], labels_dict[edge[1]])
+                weights.append(w)
 
             # n-links between frames
             if i+imgw*imgh < imgw * imgh * imgn:
                 edge = (i, i+imgw*imgh)
                 edges.append(edge)
                 edge_colors.append('grey')
-                weights.append(self.nLinkWeight(labels_dict[edge[0]], labels_dict[edge[1]]))
+
+                w = self.nLinkWeight(labels_dict[edge[0]], labels_dict[edge[1]])
+                weights.append(w)
 
         colors = ['#add8e6'] * (imgw * imgh * imgn) + ['#ffcccb', '#ffcccb']
 
