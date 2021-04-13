@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 class GraphAlgorithms:
 
-    def __init__(self, img, tSeeds, sSeeds, lmbda=3, R_bins=50):
+    def __init__(self, img, tSeeds, sSeeds, lmbda=3, R_bins=5):
         self.img = img
 
         laplacian = cv.Laplacian(img,cv.CV_64F)
