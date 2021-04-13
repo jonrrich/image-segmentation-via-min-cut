@@ -49,7 +49,7 @@ def select_regions(img,region_type):
             return all_regions
 
 
-def main():
+def test_lambda():
     Img = Image('images/dog2.jpg')
     img = Img.img
 
@@ -79,6 +79,55 @@ def main():
 
         plt.show()
         plt.close()
+
+
+def video():
+    Imgs = []
+    imgs = []
+
+    obj_seeds = []
+    back_seeds = []
+    for frame_idx in range(len(video)):
+        frame = video[i]
+
+        Img = Image(frame)
+        Imgs.append(Img)
+
+        img = Img.img
+        imgs.append(img)
+
+        message('Mouse click to select seeds\nKey click for next frame')
+        if plt.waitforbuttonpress():
+            return continue
+
+        obj_regions = select_regions(img,"object")
+        background_regions = select_regions(img,"background")
+        plt.close()
+
+        obj_seeds.append(set([(x,y,frame_idx) for reg in obj_regions for y in range(reg[0],reg[1]+1) for x in range(reg[2],reg[3]+1)]))
+        back_seeds.append(set([(x,y,frame_idx) for reg in background_regions for y in range(reg[0],reg[1]+1) for x in range(reg[2],reg[3]+1)]))
+
+    print("Seeds created")
+
+    GraphAlgos = GraphAlgorithms(Img.gray_img, back_seeds, obj_seeds)
+    G = GraphAlgos.G
+    print("Graph made")
+    #G.show()
+    G.min_cut()
+    print("Min cut found")
+    #G.show()
+    plt.close()
+
+    segmented = Img.segmentation(G.partition_S_labels)
+    plt.imshow(segmented)
+    plt.title("Lambda = " + str(lm), fontsize=16)
+    plt.draw()
+
+    plt.show()
+    plt.close()
+
+
+
 
 if __name__ == "__main__":
     main()

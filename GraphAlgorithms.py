@@ -7,12 +7,40 @@ import matplotlib.pyplot as plt
 
 class GraphAlgorithms:
 
-    def __init__(self, img, tSeeds, sSeeds, lmbda=3, R_bins=5):
-        self.img = img
+    def __init__(self, frames, tSeeds, sSeeds, lmbda=50, R_bins=5):
 
-        laplacian = cv.Laplacian(img,cv.CV_64F)
+        self.lmbda = lmbda
+
+        self.tSeeds = set(tSeeds) #background
+        self.sSeeds = set(sSeeds) #object
 
         self.B = dict()
+        if frames.shape[2]>1:
+            self.construct_B_vid()
+
+            tVals = [frames[i[2], i[1], i[0]] for i in self.tSeeds]
+            sVals = [frames[i[2], i[1], i[0]] for i in self.sSeeds]
+
+        else:
+            img = frames[0]
+            self.construct_B_img(img)
+
+            tVals = [img[i[1], i[0]] for i in self.tSeeds]
+            sVals = [img[i[1], i[0]] for i in self.sSeeds]
+
+
+        self.tHist, self.bin_edges = np.histogram(tVals,bins=R_bins,range=(0,255))
+        self.tHist = self.tHist / sum(self.tHist)
+
+        self.sHist, bin_edges = np.histogram(sVals,bins=self.bin_edges)
+        self.sHist = self.sHist / sum(self.sHist)
+
+        print("Creating graph")
+        self.G = self.create_graph()
+
+
+    def construct_B_img(self,img):
+        laplacian = cv.Laplacian(img,cv.CV_64F)
 
         for x in range(laplacian.shape[1]):
             for y in range(laplacian.shape[0]):
@@ -22,9 +50,8 @@ class GraphAlgorithms:
                 if x+1 < laplacian.shape[1]:
                     edges.append([(x, y), (x+1, y)])
                 for edge in edges:
-                    laplacian_edge = (abs(laplacian[edge[0][1], edge[0][0]]) + abs(laplacian[edge[1][1], edge[0][1]]))/2
+                    laplacian_edge = (abs(laplacian[edge[0][1], edge[0][0]]) + abs(laplacian[edge[1][1], edge[1][0]]))/2
                     self.B[frozenset(edge)] = -1 if laplacian_edge==0 else 1/laplacian_edge
-
 
         max_B = max(self.B.values())+1
         for i in self.B:
@@ -32,22 +59,33 @@ class GraphAlgorithms:
                 self.B[i] = max_B
 
         self.K = max_B+1
-        self.lmbda = lmbda
 
-        self.tSeeds = set(tSeeds) #background
-        self.sSeeds = set(sSeeds) #object
 
-        tVals = [img[i[1], i[0]] for i in self.tSeeds]
-        sVals = [img[i[1], i[0]] for i in self.sSeeds]
+    def construct_B_vid(self):
+        laplacian = np.array()
+        for z in range(self.frames.shape[0]):
+            np.append(laplacian,cv.Laplacian(img,cv.CV_64F))
 
-        self.tHist, self.bin_edges = np.histogram(tVals,bins=R_bins,range=(0,255))
-        self.tHist = self.tHist / sum(self.tHist)
+            for x in range(laplacian.shape[2]):
+                for y in range(laplacian.shape[1]):
+                    edges = []
+                    if y+1 < laplacian.shape[1]:
+                        edges.append([(x, y, z), (x, y+1, z)])
+                    if x+1 < laplacian.shape[2]:
+                        edges.append([(x, y, z), (x+1, y, z)])
+                    if z>0:
+                        edges.append([(x, y, z), (x, y, z-1)])
 
-        self.sHist, bin_edges = np.histogram(sVals,bins=self.bin_edges)
-        self.sHist = self.sHist / sum(self.sHist)
+                    for edge in edges:
+                        laplacian_edge = (abs(laplacian[edge[0][2], edge[0][1], edge[0][0]]) + abs(laplacian[edge[1][2], edge[1][1], edge[1][0]]))/2
+                        self.B[frozenset(edge)] = -1 if laplacian_edge==0 else 1/laplacian_edge
 
-        print("Creating graph")
-        self.G = self.create_graph(img.shape[1], img.shape[0])
+        max_B = max(self.B.values())+1
+        for i in self.B:
+            if self.B[i] == -1:
+                self.B[i] = max_B
+
+        self.K = max_B+1
 
 
     def tLinkWeight(self, pixel, intensity, terminal):
@@ -80,8 +118,10 @@ class GraphAlgorithms:
         return self.B[frozenset({pixel1,pixel2})]
 
 
+    def create_graph(self):
+        imgw = self.frames.shape[2]
+        imgh = self.frames.shape[1]
 
-    def create_graph(self, imgw, imgh):
         vertices = list(range(imgw * imgh + 2))
         pixel_vertices = vertices[0:-2]
         terminal_vertices = vertices[-2:]
