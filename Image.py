@@ -13,7 +13,8 @@ class Image:
         segmented = np.zeros_like(self.gray_img)
         obj_pixels = [p for p in obj_pixels if p != 'S']
 
-        segmented = ((self.gray_img>0)*255).astype('uint8')
+        for pixel in obj_pixels:
+            segmented[pixel[1],pixel[0]] = 1 if self.gray_img[pixel[1],pixel[0]]>0 else 0
 
         element = cv.getStructuringElement(cv.MORPH_ELLIPSE, (7,7),(3, 3))
 
@@ -28,7 +29,11 @@ class Image:
         return segmented
 
     def apply_mask(self, binary):
-        masked = self.img*(binary//255)
+        masked = np.zeros_like(self.img)
+        for i in range(self.img.shape[0]):
+            for j in range(self.img.shape[0]):
+                masked[i,j] = self.img[i,j] if binary[i,j]>0 else 0
+
         return masked
 
 
