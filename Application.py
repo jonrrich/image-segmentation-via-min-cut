@@ -116,8 +116,8 @@ def run_video():
     obj_seeds = []
     back_seeds = []
     frames = []
-    for frame_idx in range(len(video)):
-        name = dir + "/frame"+str(frame_idx)+".png"
+    for frame_idx in range(num_frames):
+        name = dir + "/frame"+str(frame_idx+1)+".png"
 
         Img = Image(name)
         img = Img.img
@@ -131,8 +131,8 @@ def run_video():
         background_regions = select_regions(img,"background")
         plt.close()
 
-        obj_seeds.append(set([(x,y,frame_idx) for reg in obj_regions for y in range(reg[0],reg[1]+1) for x in range(reg[2],reg[3]+1)]))
-        back_seeds.append(set([(x,y,frame_idx) for reg in background_regions for y in range(reg[0],reg[1]+1) for x in range(reg[2],reg[3]+1)]))
+        obj_seeds += set([(x,y,frame_idx) for reg in obj_regions for y in range(reg[0],reg[1]+1) for x in range(reg[2],reg[3]+1)])
+        back_seeds += set([(x,y,frame_idx) for reg in background_regions for y in range(reg[0],reg[1]+1) for x in range(reg[2],reg[3]+1)])
 
     print("Seeds created")
 
@@ -155,6 +155,6 @@ def run_video():
 
 
 if __name__ == "__main__":
-    run_img()
-    #run_video()
+    #run_img()
+    run_video()
     #test_lambda()
