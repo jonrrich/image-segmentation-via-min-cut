@@ -49,11 +49,14 @@ class Graph:
         plt.show()
 
     def min_cut(self, start_from_previous_graph=True):
-        R = nx.algorithms.flow.boykov_kolmogorov(self.G, self.vertices_dict['S'], self.vertices_dict['T'], capacity='weight', residual=self.R if start_from_previous_graph else None)
+        #R = nx.algorithms.flow.boykov_kolmogorov(self.G, self.vertices_dict['S'], self.vertices_dict['T'], capacity='weight', residual=self.R if start_from_previous_graph else None)
+        R = nx.algorithms.flow.minimum_cut(self.G, self.vertices_dict['S'], self.vertices_dict['T'], capacity='weight')[1]
         self.R = R
-        source_tree, _ = R.graph["trees"]
-        partition_1 = set(source_tree)
-        partition_2 = set(self.G) - partition_1
+        #source_tree, _ = R.graph["trees"]
+        #partition_1 = set(source_tree)
+        #partition_2 = set(self.G) - partition_1
+        partition_1 = R[0]
+        partition_2 = R[1]
 
         if (self.vertices_dict['S'] in partition_1):
             self.partition_S = partition_1

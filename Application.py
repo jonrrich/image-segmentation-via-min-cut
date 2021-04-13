@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 from Image import *
 from GraphAlgorithms import *
+import os
 
 
 # Some code from tutorial: https://matplotlib.org/stable/gallery/event_handling/ginput_manual_clabel_sgskip.html#sphx-glr-gallery-event-handling-ginput-manual-clabel-sgskip-py
@@ -49,8 +50,8 @@ def select_regions(img,region_type):
             return all_regions
 
 
-def main():
-    Img = Image('images/dog4.jpg')
+def test_lambda():
+    Img = Image('images/dog2.jpg')
     img = Img.img
 
     obj_regions = select_regions(img,"object")
@@ -63,7 +64,7 @@ def main():
 
     lm_list = np.array([i for i in range(0,600,100)])/10
     for lm in lm_list:
-        GraphAlgos = GraphAlgorithms(Img.gray_img, back_seeds, obj_seeds, lmbda=lm)
+        GraphAlgos = GraphAlgorithms([Img.gray_img], back_seeds, obj_seeds, lmbda=lm)
         G = GraphAlgos.G
         print("Graph made")
         #G.show()
@@ -79,6 +80,79 @@ def main():
 
         plt.show()
         plt.close()
+
+def run_img():
+    Img = Image('images/dog2.jpg')
+    img = Img.img
+
+    obj_regions = select_regions(img,"object")
+    background_regions = select_regions(img,"background")
+    plt.close()
+
+    obj_seeds = set([(x,y) for reg in obj_regions for y in range(reg[0],reg[1]+1) for x in range(reg[2],reg[3]+1)])
+    back_seeds = set([(x,y) for reg in background_regions for y in range(reg[0],reg[1]+1) for x in range(reg[2],reg[3]+1)])
+    print("Seeds created")
+
+    GraphAlgos = GraphAlgorithms([Img.gray_img], back_seeds, obj_seeds)
+    G = GraphAlgos.G
+    print("Graph made")
+    #G.show()
+    G.min_cut()
+    print("Min cut found")
+    #G.show()
+    plt.close()
+
+    segmented = Img.segmentation(G.partition_S_labels)
+    plt.imshow(segmented)
+
+    plt.show()
+    plt.close()
+
+
+def run_video():
+    dir = 'walking_man'
+    num_frames = len(os.listdir(dir))
+
+    obj_seeds = []
+    back_seeds = []
+    frames = []
+    for frame_idx in range(len(video)):
+        name = dir + "/frame"+str(frame_idx)+".png"
+
+        Img = Image(name)
+        img = Img.img
+        frames.append(Img.gray_img)
+
+        message('Mouse click to select seeds\nKey click for next frame')
+        if plt.waitforbuttonpress():
+            return continue
+
+        obj_regions = select_regions(img,"object")
+        background_regions = select_regions(img,"background")
+        plt.close()
+
+        obj_seeds.append(set([(x,y,frame_idx) for reg in obj_regions for y in range(reg[0],reg[1]+1) for x in range(reg[2],reg[3]+1)]))
+        back_seeds.append(set([(x,y,frame_idx) for reg in background_regions for y in range(reg[0],reg[1]+1) for x in range(reg[2],reg[3]+1)]))
+
+    print("Seeds created")
+
+    GraphAlgos = GraphAlgorithms(frames, back_seeds, obj_seeds)
+    G = GraphAlgos.G
+    print("Graph made")
+    #G.show()
+    G.min_cut()
+    print("Min cut found")
+    #G.show()
+    plt.close()
+
+    segmented = Img.segmentation(G.partition_S_labels)
+    plt.imshow(segmented)
+
+    plt.show()
+    plt.close()
+
+
+
 
 if __name__ == "__main__":
     main()
