@@ -17,7 +17,7 @@ class GraphAlgorithms:
         self.frames = frames
 
         self.B = dict()
-        if frames.shape[2]>1:
+        if frames.shape[0]>1:
             self.construct_B_vid()
 
             tVals = [frames[i[2], i[1], i[0]] for i in self.tSeeds]
@@ -25,6 +25,7 @@ class GraphAlgorithms:
 
         else:
             img = frames[0]
+            self.img = img
             self.construct_B_img(img)
 
             tVals = [img[i[1], i[0]] for i in self.tSeeds]
