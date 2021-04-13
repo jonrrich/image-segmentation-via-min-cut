@@ -125,7 +125,8 @@ def run_video():
         img = Img.img
         frames.append(Img.gray_img)
 
-        message('Mouse click to select seeds\nKey click for next frame')
+        plt.imshow(img)
+        message('Frame '+str(frame_idx)+', Mouse click to select seeds\nKey click for next frame')
         if plt.waitforbuttonpress():
             continue
 
@@ -147,17 +148,19 @@ def run_video():
     #G.show()
     plt.close()
 
-    segmented = Img.segmentation(G.partition_S_labels)
+    for z in range(G.partition_S_labels.shape[0]):
+        partition = [(i[1],i[2]) for i in G.partition_S_labels() if i[0]==z]
+        segmented = Img.segmentation(partition)
+        masked = Img.apply_mask(segmented)
 
-    plt.imshow(segmented)
+        message('Frame '+str(z))
+        plt.imshow(masked)
 
-    plt.show()
-    plt.close()
-
-
+        plt.show()
+        plt.close()
 
 
 if __name__ == "__main__":
-    run_img()
-    #run_video()
+    #run_img()
+    run_video()
     #test_lambda()
