@@ -114,6 +114,7 @@ def run_img():
 def run_video():
     dir = 'walking_man'
     num_frames = len([f for f in os.listdir(dir) if f[0]!='.'])
+    Imgs = []
 
     obj_seeds = []
     back_seeds = []
@@ -122,6 +123,7 @@ def run_video():
         name = dir + "/frame"+str(frame_idx+1)+".jpg"
 
         Img = Image(name)
+        Imgs.append(Img)
         img = Img.img
         frames.append(Img.gray_img)
 
@@ -139,7 +141,7 @@ def run_video():
 
     print("Seeds created")
 
-    GraphAlgos = GraphAlgorithms(np.array(frames), back_seeds, obj_seeds)
+    GraphAlgos = GraphAlgorithms(np.array(frames), back_seeds, obj_seeds, lmbda=10, R_bins=20)
     G = GraphAlgos.G
     print("Graph made")
     #G.show()
@@ -148,10 +150,13 @@ def run_video():
     #G.show()
     plt.close()
 
-    for z in range(G.partition_S_labels.shape[0]):
-        partition = [(i[1],i[2]) for i in G.partition_S_labels() if i[0]==z]
-        segmented = Img.segmentation(partition)
-        masked = Img.apply_mask(segmented)
+
+    partition_labels = np.array(G.partition_S_labels)
+    for z in range(num_frames):
+        partition = [(i[0],i[1]) for i in partition_labels if i!='S' and i[2]==z]
+
+        segmented = Imgs[z].segmentation(partition)
+        masked = Imgs[z].apply_mask(segmented)
 
         message('Frame '+str(z))
         plt.imshow(masked)
