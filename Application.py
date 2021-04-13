@@ -16,8 +16,7 @@ def message(s):
 
 
 def select_regions(img,region_type):
-    fig, ax = plt.subplots()
-    ax.imshow(img)
+    plt.imshow(img)
     all_regions = []
 
     while True:
@@ -64,7 +63,7 @@ def select_regions(img,region_type):
 
         # draw rectangle
         color = 'r' if region_type=="object" else 'b'
-        ax.add_patch(Rectangle((min_y-.5,min_x-.5),max_y-min_y,max_x-min_x,linewidth=1,edgecolor=color,facecolor=color))
+        plt.gca().add_patch(Rectangle((min_y-.5,min_x-.5),max_y-min_y,max_x-min_x,linewidth=1,edgecolor=color,facecolor=color))
 
         message('Mouse click to select another region\nKey click to move on')
 
@@ -134,7 +133,7 @@ def run_img():
 
 
 def run_video():
-    dir = 'walking_man'
+    dir = 'synthetic'
     num_frames = len([f for f in os.listdir(dir) if f[0]!='.'])
     Imgs = []
 
