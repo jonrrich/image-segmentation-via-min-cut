@@ -82,7 +82,7 @@ def test_lambda():
         plt.close()
 
 def run_img():
-    Img = Image('images/dog2.jpg')
+    Img = Image('images/car3.jpg')
     img = Img.img
 
     obj_regions = select_regions(img,"object")
@@ -103,7 +103,9 @@ def run_img():
     plt.close()
 
     segmented = Img.segmentation(G.partition_S_labels)
-    plt.imshow(segmented)
+    masked = Img.apply_mask(segmented)
+
+    plt.imshow(masked)
 
     plt.show()
     plt.close()
@@ -146,9 +148,8 @@ def run_video():
     plt.close()
 
     segmented = Img.segmentation(G.partition_S_labels)
-    masked = Img.apply_mask(segmented)
 
-    plt.imshow(masked)
+    plt.imshow(segmented)
 
     plt.show()
     plt.close()
