@@ -62,9 +62,9 @@ class GraphAlgorithms:
 
 
     def construct_B_vid(self):
-        laplacian = np.array()
+        laplacian = []
         for z in range(self.frames.shape[0]):
-            np.append(laplacian,cv.Laplacian(img,cv.CV_64F))
+            laplacian.append(cv.Laplacian(img,cv.CV_64F))
 
             for x in range(laplacian.shape[2]):
                 for y in range(laplacian.shape[1]):
