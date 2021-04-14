@@ -32,10 +32,12 @@ class Image:
         return segmented
 
     def apply_mask(self, binary):
-        masked = np.zeros_like(self.img)
+        #masked = np.zeros_like(self.img)
+        masked = np.array(Image('images/space2.jpg').img)
+
         for i in range(self.img.shape[0]):
-            for j in range(self.img.shape[0]):
-                masked[i,j] = self.img[i,j] if binary[i,j]>0 else 0
+            for j in range(self.img.shape[1]):
+                masked[i,j] = self.img[i,j] if binary[i,j]>0 else masked[i,j]
 
         return masked
 
