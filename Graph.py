@@ -43,8 +43,8 @@ class Graph:
         scaled_weights = np.log(np.log(np.array(self.W) + 1) + 1)
         scaled_weights = scaled_weights / np.max(scaled_weights) * 5
 
-        nx.draw_networkx_nodes(self.G, self.positions_dict, node_size=5, node_color=self.colors)
-        # nx.draw_networkx_labels(self.G, self.positions_dict, font_size=6, labels=self.labels_dict)
+        nx.draw_networkx_nodes(self.G, self.positions_dict, node_size=500, node_color=self.colors)
+        nx.draw_networkx_labels(self.G, self.positions_dict, font_size=6, labels=dict(self.labels_dict))
         nx.draw_networkx_edges(self.G, self.positions_dict, edgelist=self.E, width=scaled_weights, edge_color=self.edge_colors)
         plt.show()
 

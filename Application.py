@@ -4,6 +4,7 @@ from matplotlib.patches import Rectangle
 from Image import *
 from GraphAlgorithms import *
 import os
+import math
 
 
 # Some code from tutorial: https://matplotlib.org/stable/gallery/event_handling/ginput_manual_clabel_sgskip.html#sphx-glr-gallery-event-handling-ginput-manual-clabel-sgskip-py
@@ -21,7 +22,27 @@ def select_regions(img,region_type):
     while True:
         message("Define rectangular " + region_type + " region")
         pts = plt.ginput(n=2,timeout=-1)
-        #print(pts)
+
+        for i in (0,1):
+            pts[i] = [pts[i][0]+.5, pts[i][1]+.5]
+
+        if pts[0][0] > pts[1][0]:
+            pts[0][0] = math.ceil(pts[0][0])-1e-6
+            pts[1][0] = math.floor(pts[1][0])
+        else:
+            pts[0][0] = math.floor(pts[0][0])
+            pts[1][0] = math.ceil(pts[1][0])-1e-6
+
+        if pts[0][1] > pts[1][1]:
+            pts[0][1] = math.ceil(pts[0][1])-1e-6
+            pts[1][1] = math.floor(pts[1][1])
+        else:
+            pts[0][1] = math.floor(pts[0][1])
+            pts[1][1] = math.ceil(pts[1][1])-1e-6
+
+        print(pts)
+
+
 
         if pts[0][0] < pts[1][0]:
             min_y = pts[0][0]
@@ -42,7 +63,7 @@ def select_regions(img,region_type):
 
         # draw rectangle
         color = 'r' if region_type=="object" else 'b'
-        plt.gca().add_patch(Rectangle((min_y,min_x),max_y-min_y,max_x-min_x,linewidth=1,edgecolor=color,facecolor=color))
+        plt.gca().add_patch(Rectangle((min_y-.5,min_x-.5),max_y-min_y,max_x-min_x,linewidth=1,edgecolor=color,facecolor=color))
 
         message('Mouse click to select another region\nKey click to move on')
 
@@ -112,7 +133,7 @@ def run_img():
 
 
 def run_video():
-    dir = 'walking_man'
+    dir = 'synthetic'
     num_frames = len([f for f in os.listdir(dir) if f[0]!='.'])
     Imgs = []
 
@@ -139,15 +160,19 @@ def run_video():
         obj_seeds += set([(x,y,frame_idx) for reg in obj_regions for y in range(reg[0],reg[1]+1) for x in range(reg[2],reg[3]+1)])
         back_seeds += set([(x,y,frame_idx) for reg in background_regions for y in range(reg[0],reg[1]+1) for x in range(reg[2],reg[3]+1)])
 
+        print(obj_seeds)
+        print(back_seeds)
+
     print("Seeds created")
 
-    GraphAlgos = GraphAlgorithms(np.array(frames), back_seeds, obj_seeds, lmbda=0, R_bins=50)
+    GraphAlgos = GraphAlgorithms(np.array(frames), back_seeds, obj_seeds, lmbda=0, R_bins=20)
+
     G = GraphAlgos.G
     print("Graph made")
-    #G.show()
+    G.show()
     G.min_cut()
     print("Min cut found")
-    #G.show()
+    G.show()
     plt.close()
 
 
