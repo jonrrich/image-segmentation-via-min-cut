@@ -83,7 +83,7 @@ def test_lambda():
     back_seeds = set([(x,y,0) for reg in background_regions for y in range(reg[0],reg[1]+1) for x in range(reg[2],reg[3]+1)])
     print("Seeds created")
 
-    lm_list = np.array([0., 0.05, 0.1, 0.8, 3])
+    lm_list = np.array([0., 0.1, 0.5, 1, 3, 6])
     for lm in lm_list:
         GraphAlgos = GraphAlgorithms(np.array([Img.gray_img]), back_seeds, obj_seeds, lmbda=lm)
         G = GraphAlgos.G
@@ -205,6 +205,6 @@ def run_video():
 
 
 if __name__ == "__main__":
-    run_img()
+    #run_img()
     #run_video()
-    #test_lambda()
+    test_lambda()
