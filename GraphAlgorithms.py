@@ -37,27 +37,29 @@ class GraphAlgorithms:
 
 
     def construct_B_vid(self):
-        laplacian = []
-        for z in range(self.frames.shape[0]):
-            img = self.frames[z]
-            laplacian.append(cv.Laplacian(img,cv.CV_64F))
 
-        laplacian = np.array(laplacian)
+        axis0 = np.gradient(np.gradient(self.frames,axis=0),axis=0)
+        axis1 = np.gradient(np.gradient(self.frames,axis=1),axis=1)
+        axis2 = np.gradient(np.gradient(self.frames,axis=2),axis=2)
 
         for z in range(self.frames.shape[0]):
-            for x in range(laplacian.shape[2]):
-                for y in range(laplacian.shape[1]):
-                    edges = []
-                    if y+1 < laplacian.shape[1]:
-                        edges.append([(x, y, z), (x, y+1, z)])
-                    if x+1 < laplacian.shape[2]:
-                        edges.append([(x, y, z), (x+1, y, z)])
-                    if z>0:
-                        edges.append([(x, y, z), (x, y, z-1)])
-
-                    for edge in edges:
-                        laplacian_edge = (abs(laplacian[edge[0][2], edge[0][1], edge[0][0]]) + abs(laplacian[edge[1][2], edge[1][1], edge[1][0]]))/2
+            for x in range(self.frames.shape[2]):
+                for y in range(self.frames.shape[1]):
+                    if y+1 < self.frames.shape[1]:
+                        edge = [(x, y, z), (x, y+1, z)]
+                        laplacian_edge = (abs(axis1[edge[0][2], edge[0][1], edge[0][0]]) + abs(axis1[edge[1][2], edge[1][1], edge[1][0]]))/2
                         self.B[frozenset(edge)] = -1 if laplacian_edge==0 else 1/laplacian_edge
+
+                    if x+1 < self.frames.shape[2]:
+                        edge = [(x, y, z), (x+1, y, z)]
+                        laplacian_edge = (abs(axis2[edge[0][2], edge[0][1], edge[0][0]]) + abs(axis2[edge[1][2], edge[1][1], edge[1][0]]))/2
+                        self.B[frozenset(edge)] = -1 if laplacian_edge==0 else 1/laplacian_edge
+
+                    if z>0:
+                        edge = [(x, y, z), (x, y, z-1)]
+                        laplacian_edge = (abs(axis0[edge[0][2], edge[0][1], edge[0][0]]) + abs(axis0[edge[1][2], edge[1][1], edge[1][0]]))/2
+                        self.B[frozenset(edge)] = -1 if laplacian_edge==0 else 1/laplacian_edge
+
 
         max_B = max(self.B.values())+1
         for i in self.B:
