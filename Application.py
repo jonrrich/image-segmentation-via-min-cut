@@ -172,7 +172,7 @@ def run_video():
 
     print("Seeds created")
 
-    GraphAlgos = GraphAlgorithms(np.array(frames), back_seeds, obj_seeds, lmbda=0.01, R_bins=10)
+    GraphAlgos = GraphAlgorithms(np.array(frames), back_seeds, obj_seeds, lmbda=0.07, R_bins=10)
 
     G = GraphAlgos.G
     print("Graph made")
@@ -199,6 +199,6 @@ def run_video():
 
 
 if __name__ == "__main__":
-    #run_img()
+    run_img()
     #run_video()
-    test_lambda()
+    #test_lambda()

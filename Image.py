@@ -20,12 +20,12 @@ class Image:
             element = cv.getStructuringElement(cv.MORPH_ELLIPSE, (3,3))
 
             # remove holes
-            segmented = cv.dilate(segmented, element, iterations=1)
-            segmented = cv.erode(segmented, element, iterations=1)
+            segmented = cv.dilate(segmented, element, iterations=2)
+            segmented = cv.erode(segmented, element, iterations=2)
 
             # remove noise
-            segmented = cv.erode(segmented, element, iterations=1)
-            segmented = cv.dilate(segmented, element, iterations=1)
+            segmented = cv.erode(segmented, element, iterations=2)
+            segmented = cv.dilate(segmented, element, iterations=2)
 
 
 
