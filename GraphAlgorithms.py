@@ -38,33 +38,21 @@ class GraphAlgorithms:
 
     def construct_B_vid(self):
 
-        frames = self.frames if self.frames.shape[0]>1 else self.frames[0]
-
-        axis0 = np.gradient(frames,axis=0),axis=0
-        axis1 = np.gradient(frames,axis=1),axis=1
-
-        if len(frames.shape)>2:
-            axis2 = np.gradient(frames,axis=2),axis=2)
+        axis0 = np.gradient(np.gradient(self.frames,axis=0),axis=0)
+        axis1 = np.gradient(np.gradient(self.frames,axis=1),axis=1)
+        axis2 = np.gradient(np.gradient(self.frames,axis=2),axis=2)
 
         for z in range(self.frames.shape[0]):
             for x in range(self.frames.shape[2]):
                 for y in range(self.frames.shape[1]):
                     if y+1 < self.frames.shape[1]:
                         edge = [(x, y, z), (x, y+1, z)]
-                        if len(frames.shape)>2:
-                            laplacian_edge = (abs(axis1[edge[0][2], edge[0][1], edge[0][0]]) + abs(axis1[edge[1][2], edge[1][1], edge[1][0]]))/2
-                        else:
-                            laplacian_edge = (abs(axis1[edge[0][1], edge[0][0]]) + abs(axis1[edge[1][1], edge[1][0]]))/2
-
+                        laplacian_edge = (abs(axis1[edge[0][2], edge[0][1], edge[0][0]]) + abs(axis1[edge[1][2], edge[1][1], edge[1][0]]))/2
                         self.B[frozenset(edge)] = -1 if laplacian_edge==0 else 1/laplacian_edge
 
                     if x+1 < self.frames.shape[2]:
                         edge = [(x, y, z), (x+1, y, z)]
-                        if len(frames.shape)>2:
-                            laplacian_edge = (abs(axis1[edge[0][2], edge[0][1], edge[0][0]]) + abs(axis1[edge[1][2], edge[1][1], edge[1][0]]))/2
-                        else:
-                            laplacian_edge = (abs(axis1[edge[0][1], edge[0][0]]) + abs(axis1[edge[1][1], edge[1][0]]))/2
-
+                        laplacian_edge = (abs(axis2[edge[0][2], edge[0][1], edge[0][0]]) + abs(axis2[edge[1][2], edge[1][1], edge[1][0]]))/2
                         self.B[frozenset(edge)] = -1 if laplacian_edge==0 else 1/laplacian_edge
 
                     if z>0:
