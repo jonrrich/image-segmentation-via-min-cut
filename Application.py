@@ -138,6 +138,12 @@ def run_img():
     plt.show()
     plt.close()
 
+    segmented = Img.segmentation(G.partition_S_labels, process=True)
+    masked = Img.apply_mask(segmented, back_img=True)
+    plt.imshow(masked)
+    plt.show()
+    plt.close()
+
 
 def run_video():
     dir = 'walking_man'
