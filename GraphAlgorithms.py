@@ -48,18 +48,29 @@ class GraphAlgorithms:
                     if y+1 < self.frames.shape[1]:
                         edge = [(x, y, z), (x, y+1, z)]
                         laplacian_edge = (abs(axis1[edge[0][2], edge[0][1], edge[0][0]]) + abs(axis1[edge[1][2], edge[1][1], edge[1][0]]))/2
-                        self.B[frozenset(edge)] = -1 if laplacian_edge==0 else 1/laplacian_edge
+
+                        if laplacian_edge==0:
+                            self.B[frozenset(edge)] = -1
+                        else:
+                            self.B[frozenset(edge)] = 6 if (1/laplacian_edge)>6 else 1/laplacian_edge
 
                     if x+1 < self.frames.shape[2]:
                         edge = [(x, y, z), (x+1, y, z)]
                         laplacian_edge = (abs(axis2[edge[0][2], edge[0][1], edge[0][0]]) + abs(axis2[edge[1][2], edge[1][1], edge[1][0]]))/2
-                        self.B[frozenset(edge)] = -1 if laplacian_edge==0 else 1/laplacian_edge
+
+                        if laplacian_edge==0:
+                            self.B[frozenset(edge)] = -1
+                        else:
+                            self.B[frozenset(edge)] = 6 if (1/laplacian_edge)>6 else 1/laplacian_edge
 
                     if z>0:
                         edge = [(x, y, z), (x, y, z-1)]
                         laplacian_edge = (abs(axis0[edge[0][2], edge[0][1], edge[0][0]]) + abs(axis0[edge[1][2], edge[1][1], edge[1][0]]))/2
-                        self.B[frozenset(edge)] = -1 if laplacian_edge==0 else 1/laplacian_edge
 
+                        if laplacian_edge==0:
+                            self.B[frozenset(edge)] = -1
+                        else:
+                            self.B[frozenset(edge)] = 6 if (1/laplacian_edge)>6 else 1/laplacian_edge
 
         max_B = max(self.B.values())+1
         for i in self.B:
@@ -196,15 +207,6 @@ class GraphAlgorithms:
                 w = self.nLinkWeight(labels_dict[edge[0]], labels_dict[edge[1]])
                 weights.append(w)
                 n_weights.append(w)
-
-        print("WEIGHTS")
-        print(np.mean(n_weights))
-        print(np.mean(t_weights))
-
-        plt.hist(n_weights,bins=40)
-        plt.show()
-        plt.hist(t_weights,bins=40)
-        plt.show()
 
         colors = ['#add8e6'] * (imgw * imgh * imgn) + ['#ffcccb', '#ffcccb']
 
