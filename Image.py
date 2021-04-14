@@ -9,22 +9,25 @@ class Image:
         self.gray_img = 0.2989*self.img[:,:,0] + 0.5870*self.img[:,:,1] + 0.1140*self.img[:,:,2]
 
 
-    def segmentation(self,obj_pixels):
+    def segmentation(self,obj_pixels,process=False):
         segmented = np.zeros_like(self.gray_img)
         obj_pixels = [p for p in obj_pixels if p != 'S']
 
         for pixel in obj_pixels:
             segmented[pixel[1],pixel[0]] = 1 if self.gray_img[pixel[1],pixel[0]]>0 else 0
 
-        element = cv.getStructuringElement(cv.MORPH_ELLIPSE, (7,7),(3, 3))
+        if process:
+            element = cv.getStructuringElement(cv.MORPH_ELLIPSE, (7,7),(3, 3))
 
-        # remove noise
-        #segmented = cv.erode(segmented, element, iterations=1)
-        #segmented = cv.dilate(segmented, element, iterations=1)
+            # remove holes
+            segmented = cv.dilate(segmented, element, iterations=1)
+            segmented = cv.erode(segmented, element, iterations=1)
 
-        # remove holes
-        #segmented = cv.dilate(segmented, element, iterations=1)
-        #segmented = cv.erode(segmented, element, iterations=1)
+            # remove noise
+            segmented = cv.erode(segmented, element, iterations=1)
+            segmented = cv.dilate(segmented, element, iterations=1)
+
+
 
         return segmented
 

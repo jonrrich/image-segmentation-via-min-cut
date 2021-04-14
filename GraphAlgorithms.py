@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 class GraphAlgorithms:
 
-    def __init__(self, frames, tSeeds, sSeeds, lmbda=50, R_bins=5):
+    def __init__(self, frames, tSeeds, sSeeds, lmbda=10, R_bins=5):
 
         self.lmbda = lmbda
 

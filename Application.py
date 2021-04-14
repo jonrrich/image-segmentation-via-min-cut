@@ -112,6 +112,7 @@ def run_img():
 
     obj_seeds = set([(x,y,0) for reg in obj_regions for y in range(reg[0],reg[1]+1) for x in range(reg[2],reg[3]+1)])
     back_seeds = set([(x,y,0) for reg in background_regions for y in range(reg[0],reg[1]+1) for x in range(reg[2],reg[3]+1)])
+
     print("Seeds created")
 
     GraphAlgos = GraphAlgorithms(np.array([Img.gray_img]), back_seeds, obj_seeds)
@@ -125,9 +126,14 @@ def run_img():
 
     segmented = Img.segmentation(G.partition_S_labels)
     masked = Img.apply_mask(segmented)
-
     plt.imshow(masked)
+    plt.show()
+    plt.close()
 
+
+    segmented = Img.segmentation(G.partition_S_labels,process=True)
+    masked = Img.apply_mask(segmented)
+    plt.imshow(masked)
     plt.show()
     plt.close()
 
