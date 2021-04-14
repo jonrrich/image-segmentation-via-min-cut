@@ -23,26 +23,26 @@ def select_regions(img,region_type):
         message("Define rectangular " + region_type + " region")
         pts = plt.ginput(n=2,timeout=-1)
 
-        print(pts)
-
         for i in (0,1):
             pts[i] = [pts[i][0]+.5, pts[i][1]+.5]
 
         if pts[0][0] > pts[1][0]:
-            pts[0][0] = math.ceil(pts[0][0])
+            pts[0][0] = math.ceil(pts[0][0])-1e-6
             pts[1][0] = math.floor(pts[1][0])
         else:
             pts[0][0] = math.floor(pts[0][0])
-            pts[1][0] = math.ceil(pts[1][0])
+            pts[1][0] = math.ceil(pts[1][0])-1e-6
 
         if pts[0][1] > pts[1][1]:
-            pts[0][1] = math.ceil(pts[0][1])
+            pts[0][1] = math.ceil(pts[0][1])-1e-6
             pts[1][1] = math.floor(pts[1][1])
         else:
             pts[0][1] = math.floor(pts[0][1])
-            pts[1][1] = math.ceil(pts[1][1])
+            pts[1][1] = math.ceil(pts[1][1])-1e-6
 
         print(pts)
+
+
 
         if pts[0][0] < pts[1][0]:
             min_y = pts[0][0]
@@ -160,15 +160,18 @@ def run_video():
         obj_seeds += set([(x,y,frame_idx) for reg in obj_regions for y in range(reg[0],reg[1]+1) for x in range(reg[2],reg[3]+1)])
         back_seeds += set([(x,y,frame_idx) for reg in background_regions for y in range(reg[0],reg[1]+1) for x in range(reg[2],reg[3]+1)])
 
+        print(obj_seeds)
+        print(back_seeds)
+
     print("Seeds created")
 
-    GraphAlgos = GraphAlgorithms(np.array(frames), back_seeds, obj_seeds, lmbda=10, R_bins=20)
+    GraphAlgos = GraphAlgorithms(np.array(frames), back_seeds, obj_seeds, lmbda=0, R_bins=20)
     G = GraphAlgos.G
     print("Graph made")
-    #G.show()
+    G.show()
     G.min_cut()
     print("Min cut found")
-    #G.show()
+    G.show()
     plt.close()
 
 
