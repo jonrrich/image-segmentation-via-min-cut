@@ -103,7 +103,7 @@ def test_lambda():
         plt.close()
 
 def run_img():
-    Img = Image('images/car3.jpg')
+    Img = Image('images/dog2.jpg')
     img = Img.img
 
     obj_regions = select_regions(img,"object")
@@ -192,6 +192,6 @@ def run_video():
 
 
 if __name__ == "__main__":
-    #run_img()
-    run_video()
+    run_img()
+    #run_video()
     #test_lambda()
