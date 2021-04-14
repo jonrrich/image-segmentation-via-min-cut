@@ -169,6 +169,7 @@ def run_video():
 
     G = GraphAlgos.G
     print("Graph made")
+    plt.close()
     G.show()
     G.min_cut()
     print("Min cut found")
