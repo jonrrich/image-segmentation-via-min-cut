@@ -197,15 +197,6 @@ class GraphAlgorithms:
                 weights.append(w)
                 n_weights.append(w)
 
-        print("WEIGHTS")
-        print(np.mean(n_weights))
-        print(np.mean(t_weights))
-
-        plt.hist(n_weights,bins=40)
-        plt.show()
-        plt.hist(t_weights,bins=40)
-        plt.show()
-
         colors = ['#add8e6'] * (imgw * imgh * imgn) + ['#ffcccb', '#ffcccb']
 
         G = Graph(vertices, edges, weights, labels, positions, colors, edge_colors)

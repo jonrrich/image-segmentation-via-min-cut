@@ -17,7 +17,7 @@ class Image:
             segmented[pixel[1],pixel[0]] = 1 if self.gray_img[pixel[1],pixel[0]]>0 else 0
 
         if process:
-            element = cv.getStructuringElement(cv.MORPH_ELLIPSE, (7,7),(3, 3))
+            element = cv.getStructuringElement(cv.MORPH_ELLIPSE, (3,3))
 
             # remove holes
             segmented = cv.dilate(segmented, element, iterations=1)
