@@ -103,7 +103,7 @@ def test_lambda():
         plt.close()
 
 def run_img():
-    Img = Image('images/car3.jpg')
+    Img = Image('images/dog2.jpg')
     img = Img.img
 
     obj_regions = select_regions(img,"object")
@@ -133,7 +133,7 @@ def run_img():
 
 
 def run_video():
-    dir = 'synthetic'
+    dir = 'walking_man'
     num_frames = len([f for f in os.listdir(dir) if f[0]!='.'])
     Imgs = []
 
@@ -170,10 +170,10 @@ def run_video():
     G = GraphAlgos.G
     print("Graph made")
     plt.close()
-    G.show()
+    #G.show()
     G.min_cut()
     print("Min cut found")
-    G.show()
+    #G.show()
     plt.close()
 
 
@@ -192,6 +192,6 @@ def run_video():
 
 
 if __name__ == "__main__":
-    #run_img()
-    run_video()
+    run_img()
+    #run_video()
     #test_lambda()
