@@ -2,6 +2,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
 import random
+import math
 
 class Graph:
     def __init__(self, vertices, edges, weights, labels, positions, colors, edge_colors):
@@ -40,7 +41,7 @@ class Graph:
 
 
     def show(self):
-        scaled_weights = np.log(np.log(np.array(self.W) + 1) + 1)
+        scaled_weights = np.log(np.array(self.W) + 1)
         scaled_weights = scaled_weights / np.max(scaled_weights) * 5
 
         nx.draw_networkx_nodes(self.G, self.positions_dict, node_size=500, node_color=self.colors)
@@ -90,21 +91,27 @@ class Graph:
 
 
 
-tSeeds = [(1,2), (3,4), (3,3)]
-sSeeds = [(3,1), (3,2)]
+sSeeds = [(0,0,0), (0,0,1)]
+tSeeds = [(2,2,0), (2,2,1)]
+
+def dist_btwn(a, b):
+    return math.sqrt((a[0]-b[0])**2 + (a[1]-b[1])**2 + (a[2]-b[2])**2)
+
 
 def tLinkWeight(pixel, terminal):
     if terminal == 'T':
         if pixel in tSeeds:
-            return 100
+            return 1000
+        return 10*dist_btwn(pixel, (0,0,1))
+
     if terminal == 'S':
         if pixel in sSeeds:
-            return 100
-    return 1
+            return 1000
+        return 10*dist_btwn(pixel, (2,2,1))
 
 
 def nLinkWeight(pixel1, pixel2):
-    return random.choice([1, 2, 3])
+    return random.choice([1, 3, 10])
 
 
 
@@ -159,5 +166,9 @@ if __name__ == "__main__":
     colors = ['#add8e6'] * (imgw * imgh * imgn) + ['#ffcccb', '#ffcccb']
 
     G = Graph(vertices, edges, weights, labels, positions, colors, edge_colors)
+
+    G.show()
+
+    G.min_cut()
 
     G.show()
