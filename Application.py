@@ -79,13 +79,13 @@ def test_lambda():
     background_regions = select_regions(img,"background")
     plt.close()
 
-    obj_seeds = set([(x,y) for reg in obj_regions for y in range(reg[0],reg[1]+1) for x in range(reg[2],reg[3]+1)])
-    back_seeds = set([(x,y) for reg in background_regions for y in range(reg[0],reg[1]+1) for x in range(reg[2],reg[3]+1)])
+    obj_seeds = set([(x,y,0) for reg in obj_regions for y in range(reg[0],reg[1]+1) for x in range(reg[2],reg[3]+1)])
+    back_seeds = set([(x,y,0) for reg in background_regions for y in range(reg[0],reg[1]+1) for x in range(reg[2],reg[3]+1)])
     print("Seeds created")
 
-    lm_list = np.array([i for i in range(0,600,100)])/10
+    lm_list = np.array([i for i in range(0,500,50)])/10
     for lm in lm_list:
-        GraphAlgos = GraphAlgorithms([Img.gray_img], back_seeds, obj_seeds, lmbda=lm)
+        GraphAlgos = GraphAlgorithms(np.array([Img.gray_img]), back_seeds, obj_seeds, lmbda=lm)
         G = GraphAlgos.G
         print("Graph made")
         #G.show()
@@ -94,8 +94,9 @@ def test_lambda():
         #G.show()
         plt.close()
 
-        segmented = Img.segmentation(G.partition_S_labels)
-        plt.imshow(segmented)
+        segmented = Img.segmentation(G.partition_S_labels,process=True)
+        masked = Img.apply_mask(segmented)
+        plt.imshow(masked)
         plt.title("Lambda = " + str(lm), fontsize=16)
         plt.draw()
 
@@ -115,7 +116,7 @@ def run_img():
 
     print("Seeds created")
 
-    GraphAlgos = GraphAlgorithms(np.array([Img.gray_img]), back_seeds, obj_seeds)
+    GraphAlgos = GraphAlgorithms(np.array([Img.gray_img]), back_seeds, obj_seeds,lmbda=0.1)
     G = GraphAlgos.G
     print("Graph made")
     #G.show()
