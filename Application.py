@@ -133,7 +133,7 @@ def run_img():
 
 
 def run_video():
-    dir = 'synthetic'
+    dir = 'walking_man'
     num_frames = len([f for f in os.listdir(dir) if f[0]!='.'])
     Imgs = []
 
