@@ -169,8 +169,12 @@ def run_video():
 
     G = GraphAlgos.G
     print("Graph made")
+<<<<<<< HEAD
     plt.close()
     #G.show()
+=======
+    G.show()
+>>>>>>> parent of 1549379... bug fix
     G.min_cut()
     print("Min cut found")
     #G.show()
