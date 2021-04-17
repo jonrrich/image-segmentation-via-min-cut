@@ -3,8 +3,10 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 from Image import *
 from GraphAlgorithms import *
+import networkx as nx
 import os
 import math
+import time
 
 
 # Some code from tutorial: https://matplotlib.org/stable/gallery/event_handling/ginput_manual_clabel_sgskip.html#sphx-glr-gallery-event-handling-ginput-manual-clabel-sgskip-py
@@ -119,11 +121,31 @@ def run_img():
     GraphAlgos = GraphAlgorithms(np.array([Img.gray_img]), back_seeds, obj_seeds,lmbda=0.1)
     G = GraphAlgos.G
     print("Graph made")
-    #G.show()
-    G.min_cut()
+
+
+    start_time = time.time()
+    print("Start",start_time)
+
+    G.min_cut(flow_func=nx.algorithms.flow.preflow_push)
     print("Min cut found")
-    #G.show()
-    plt.close()
+
+    end_time = time.time()
+    print("End",end_time)
+    print("Preflow Push Time: ", end_time-start_time)
+
+
+    """
+    start_time = time.time()
+    print("Start",start_time)
+
+    G.min_cut(flow_func=nx.algorithms.flow.shortest_augmenting_path)
+    print("Min cut found")
+
+    end_time = time.time()
+    print("End",end_time)
+    print("Shortest Augmenting Path Time: ", end_time-start_time)
+    """
+
 
     segmented = Img.segmentation(G.partition_S_labels)
     masked = Img.apply_mask(segmented)
@@ -143,6 +165,9 @@ def run_img():
     plt.imshow(masked)
     plt.show()
     plt.close()
+
+    print("ALGO TIME")
+    print(end_time-start_time)
 
 
 def run_video():
@@ -177,8 +202,9 @@ def run_video():
         print(back_seeds)
 
     print("Seeds created")
+    start_time = time.time()
 
-    GraphAlgos = GraphAlgorithms(np.array(frames), back_seeds, obj_seeds, lmbda=0.07, R_bins=10)
+    GraphAlgos = GraphAlgorithms(np.array(frames), back_seeds, obj_seeds, lmbda=0.1, R_bins=40)
 
     G = GraphAlgos.G
     print("Graph made")
@@ -187,7 +213,11 @@ def run_video():
     G.min_cut()
     print("Min cut found")
     #G.show()
-    plt.close()
+    #plt.close()
+
+    end_time = time.time()
+
+    print("Runtime: ", end_time-start_time)
 
 
     partition_labels = np.array(G.partition_S_labels)
@@ -204,7 +234,17 @@ def run_video():
         plt.close()
 
 
+        segmented = Imgs[z].segmentation(partition,process=True,iterations=1)
+        masked = Imgs[z].apply_mask(segmented)
+
+        message('Frame '+str(z)+'\nNoise reduction')
+        plt.imshow(masked)
+
+        plt.show()
+        plt.close()
+
+
 if __name__ == "__main__":
-    #run_img()
+    run_img()
     #run_video()
-    test_lambda()
+    #test_lambda()

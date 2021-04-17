@@ -49,9 +49,9 @@ class Graph:
         nx.draw_networkx_edges(self.G, self.positions_dict, edgelist=self.E, width=scaled_weights, edge_color=self.edge_colors)
         plt.show()
 
-    def min_cut(self, start_from_previous_graph=True):
+    def min_cut(self, start_from_previous_graph=True,flow_func=nx.algorithms.flow.preflow_push):
         #R = nx.algorithms.flow.boykov_kolmogorov(self.G, self.vertices_dict['S'], self.vertices_dict['T'], capacity='weight', residual=self.R if start_from_previous_graph else None)
-        R = nx.algorithms.flow.minimum_cut(self.G, self.vertices_dict['S'], self.vertices_dict['T'], capacity='weight')[1]
+        R = nx.algorithms.flow.minimum_cut(self.G, self.vertices_dict['S'], self.vertices_dict['T'], capacity='weight', flow_func=flow_func)[1]
         self.R = R
         #source_tree, _ = R.graph["trees"]
         #partition_1 = set(source_tree)
